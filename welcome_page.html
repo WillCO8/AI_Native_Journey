@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 20px; /* Padding for mobile screens */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 min-h-screen bg-gray-100">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+        <!-- Main Heading -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome to Your Web Page!</h1>
+
+        <!-- Input field for user's name -->
+        <div class="mb-6">
+            <label for="userName" class="block text-gray-700 text-sm font-medium mb-2">
+                Please enter your name:
+            </label>
+            <input
+                type="text"
+                id="userName"
+                placeholder="Your Name"
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+            />
+        </div>
+
+        <!-- Button to generate message -->
+        <button
+            id="greetButton"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl focus:outline-none focus:shadow-outline transform transition-all duration-200 hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+        >
+            Get My Welcome Message
+        </button>
+
+        <!-- Area to display the personalized message -->
+        <p id="welcomeMessage" class="mt-8 text-lg text-gray-700 italic">
+            <!-- The personalized welcome message will appear here -->
+        </p>
+    </div>
+
+    <script>
+        // Get references to the input field, button, and message display area
+        const userNameInput = document.getElementById('userName');
+        const greetButton = document.getElementById('greetButton');
+        const welcomeMessageDisplay = document.getElementById('welcomeMessage');
+
+        /**
+         * Generates and displays a personalized welcome message based on the input name.
+         */
+        function generateWelcomeMessage() {
+            const name = userNameInput.value.trim(); // Get the name and remove leading/trailing spaces
+
+            if (name) { // Check if the name is not empty
+                welcomeMessageDisplay.textContent = `Hello, ${name}! Welcome to your web page.`;
+                welcomeMessageDisplay.classList.remove('text-gray-700', 'italic');
+                welcomeMessageDisplay.classList.add('font-semibold', 'text-blue-700');
+            } else {
+                welcomeMessageDisplay.textContent = "Please enter your name to get a welcome message.";
+                welcomeMessageDisplay.classList.add('text-gray-700', 'italic');
+                welcomeMessageDisplay.classList.remove('font-semibold', 'text-blue-700');
+            }
+        }
+
+        // Add an event listener to the button so something happens when it's clicked
+        greetButton.addEventListener('click', generateWelcomeMessage);
+
+        // Optional: Allow pressing Enter in the input field to trigger the message
+        userNameInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                generateWelcomeMessage();
+            }
+        });
+    </script>
+
+</body>
+</html>
