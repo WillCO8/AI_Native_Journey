@@ -18,6 +18,14 @@
             padding: 20px; /* Padding for mobile screens */
             box-sizing: border-box; /* Include padding in element's total width and height */
         }
+        /* CSS for fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-message {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center p-4 min-h-screen bg-gray-100">
@@ -65,10 +73,16 @@
         function generateWelcomeMessage() {
             const name = userNameInput.value.trim(); // Get the name and remove leading/trailing spaces
 
+            // Remove animation class before adding to allow re-triggering animation if message changes quickly
+            welcomeMessageDisplay.classList.remove('fade-in-message');
+            // Force reflow to restart animation
+            void welcomeMessageDisplay.offsetWidth; 
+
             if (name) { // Check if the name is not empty
                 welcomeMessageDisplay.textContent = `Hello, ${name}! Welcome to your web page.`;
                 welcomeMessageDisplay.classList.remove('text-gray-700', 'italic');
                 welcomeMessageDisplay.classList.add('font-semibold', 'text-blue-700');
+                welcomeMessageDisplay.classList.add('fade-in-message'); // Add animation class
             } else {
                 welcomeMessageDisplay.textContent = "Please enter your name to get a welcome message.";
                 welcomeMessageDisplay.classList.add('text-gray-700', 'italic');

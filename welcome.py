@@ -43,3 +43,6 @@ if __name__ == "__main__":
 
             # 4. Print the welcome message
             print(welcome_message)
+
+    # --- Polishing Improvement: Script Completion Message ---
+    print("\nScript execution completed. Goodbye!")
