@@ -82,8 +82,8 @@ def get_user_choice(valid_choices):
         if user_input in valid_choices or user_input == "quit":
             return user_input
         else:
-            # Improved error message for better guidance
-            print(f"That's not a valid option. Please choose from: {choices_str}, or type 'quit'.")
+            # Second refinement: Improved error message to include the user's invalid input
+            print(f"'{user_input}' is not a valid option. Please choose from: {choices_str}, or type 'quit'.")
 
 # --- Function to get computer's choice ---
 def get_computer_choice(valid_choices):
@@ -278,30 +278,4 @@ if __name__ == "__main__":
         print("\nFinal Series Scores:")
         print(f"  {player_name} Wins: {player_score}")
         print(f"  Computer Wins: {computer_score}")
-        print(f"  Ties: {ties}")
-        time.sleep(1)
-
-        # NEW: Update game_data dict with current series totals
-        game_data["total_series_player_wins"] = total_series_player_wins
-        game_data["total_series_computer_wins"] = total_series_computer_wins
-        game_data["total_series_ties"] = total_series_ties
-        save_game_data(game_data) # Persist the updated totals
-
-        # Display overall game record
-        print("\n--- Overall Game Record ---")
-        print(f"Total Series Won by {player_name}: {total_series_player_wins}")
-        print(f"Total Series Won by Computer: {total_series_computer_wins}")
-        print(f"Total Series Tied: {total_series_ties}") # If you wanted to track series ties
-        time.sleep(1.5)
-
-
-        # Ask if the user wants to play another series
-        play_another_series = input("Do you want to play another best-of-3 series? (yes/no): ").lower()
-        if play_another_series != "yes":
-            break # Exit the outer loop if the user doesn't want to play another series
-
-    print("\n--- Goodbye! Thanks for playing Rock, Paper, Scissors! ---")
-    print("Final Overall Game Record:")
-    print(f"  Your Total Series Wins: {total_series_player_wins}")
-    print(f"  Computer Total Series Wins: {total_series_computer_wins}")
-    print(f"  Total Series Tied: {total_series_ties}")
+        f"  Ties: {total_series_ties}"
