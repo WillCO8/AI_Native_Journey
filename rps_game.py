@@ -1,4 +1,3 @@
-
 import random # This line imports the 'random' module, which we'll use to make the computer's choice.
 import time   # This line imports the 'time' module, which allows us to add pauses.
 import json   # NEW: Import the 'json' module for saving and loading data
@@ -67,20 +66,24 @@ def get_user_choice(valid_choices):
     Prompts the user to enter their choice (from valid_choices)
     and validates the input. Also allows 'quit' to exit the game.
     """
-    while True:
-        # Construct the prompt string clearly showing all options
-        if len(valid_choices) == 1:
-            choice_prompt = valid_choices[0]
-        elif len(valid_choices) == 2:
-            choice_prompt = f"{valid_choices[0]} or {valid_choices[1]}"
-        else:
-            choice_prompt = ", ".join(valid_choices[:-1]) + ", or " + valid_choices[-1]
+    # This block constructs a user-friendly string of valid choices.
+    # For example, ["rock", "paper", "scissors"] becomes "rock, paper, or scissors".
+    if len(valid_choices) == 1:
+        choices_str = valid_choices[0]
+    elif len(valid_choices) == 2:
+        choices_str = f"{valid_choices[0]} or {valid_choices[1]}"
+    else:
+        choices_str = ", ".join(valid_choices[:-1]) + ", or " + valid_choices[-1]
 
-        user_input = input(f"Enter your choice ({choice_prompt}, or 'quit' to exit): ").lower().strip() # Added .strip()
+    while True:
+        # Improved prompt for clarity
+        user_input = input(f"Enter your choice ({choices_str}), or type 'quit' to exit: ").lower().strip()
+        
         if user_input in valid_choices or user_input == "quit":
             return user_input
         else:
-            print(f"Invalid choice. Please enter one of {choice_prompt} or 'quit'.")
+            # Improved error message for better guidance
+            print(f"That's not a valid option. Please choose from: {choices_str}, or type 'quit'.")
 
 # --- Function to get computer's choice ---
 def get_computer_choice(valid_choices):
