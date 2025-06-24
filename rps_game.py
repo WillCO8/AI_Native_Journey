@@ -1,5 +1,10 @@
+
 import random # This line imports the 'random' module, which we'll use to make the computer's choice.
 import time   # This line imports the 'time' module, which allows us to add pauses.
+import json   # NEW: Import the 'json' module for saving and loading data
+
+# --- File Paths ---
+GAME_DATA_FILE = "game_data.json" # Define the file name for persistent storage
 
 # --- Game Rules Definition (for different modes) ---
 # Standard Rock-Paper-Scissors rules
@@ -11,11 +16,50 @@ RPS_RULES = {
 
 # Custom Game: The Rock, Wrapping Paper, Shark Tooth Scissors
 # Define how each new custom choice beats another
-CUSTOM_RULES = {
+CUSTOM_RULES_PRESET = { # Renamed to differentiate from user-defined custom rules
     "the rock": ["shark tooth scissors"],
     "wrapping paper (colorful)": ["the rock"],
     "shark tooth scissors": ["wrapping paper (colorful)"]
 }
+
+# --- Persistent Data Handling Functions ---
+def load_game_data():
+    """
+    Loads game data (overall scores, custom rules) from a JSON file.
+    Initializes with defaults if the file doesn't exist or is empty.
+    """
+    try:
+        with open(GAME_DATA_FILE, 'r') as f:
+            data = json.load(f)
+            print(f"Loaded game data from {GAME_DATA_FILE}")
+            return data
+    except FileNotFoundError:
+        print(f"No existing game data found. Creating new data file: {GAME_DATA_FILE}")
+        return {
+            "total_series_player_wins": 0,
+            "total_series_computer_wins": 0,
+            "total_series_ties": 0,
+            "saved_custom_rules": {} # To store user-defined custom games
+        }
+    except json.JSONDecodeError:
+        print(f"Error decoding {GAME_DATA_FILE}. Starting with new game data.")
+        return {
+            "total_series_player_wins": 0,
+            "total_series_computer_wins": 0,
+            "total_series_ties": 0,
+            "saved_custom_rules": {}
+        }
+
+def save_game_data(data):
+    """
+    Saves the current game data to a JSON file.
+    """
+    try:
+        with open(GAME_DATA_FILE, 'w') as f:
+            json.dump(data, f, indent=4) # Use indent for pretty-printing JSON
+            print(f"Saved game data to {GAME_DATA_FILE}")
+    except IOError as e:
+        print(f"Error saving game data to {GAME_DATA_FILE}: {e}")
 
 # --- Function to get user's choice ---
 def get_user_choice(valid_choices):
@@ -25,7 +69,6 @@ def get_user_choice(valid_choices):
     """
     while True:
         # Construct the prompt string clearly showing all options
-        # Handle cases where valid_choices might have only one or two items
         if len(valid_choices) == 1:
             choice_prompt = valid_choices[0]
         elif len(valid_choices) == 2:
@@ -33,7 +76,7 @@ def get_user_choice(valid_choices):
         else:
             choice_prompt = ", ".join(valid_choices[:-1]) + ", or " + valid_choices[-1]
 
-        user_input = input(f"Enter your choice ({choice_prompt}, or 'quit' to exit): ").lower()
+        user_input = input(f"Enter your choice ({choice_prompt}, or 'quit' to exit): ").lower().strip() # Added .strip()
         if user_input in valid_choices or user_input == "quit":
             return user_input
         else:
@@ -55,9 +98,9 @@ def determine_winner(user_choice, computer_choice, rules):
     """
     if user_choice == computer_choice:
         return "It's a tie!", "tie"
-    elif computer_choice in rules[user_choice]: # If user_choice beats computer_choice
+    elif computer_choice in rules.get(user_choice, []): # Use .get() with default for robustness
         return "You win!", "user"
-    elif user_choice in rules[computer_choice]: # If computer_choice beats user_choice
+    elif user_choice in rules.get(computer_choice, []): # Use .get() with default for robustness
         return "Computer wins!", "computer"
     else:
         # This else should ideally not be reached with correct rules and valid inputs
@@ -69,40 +112,63 @@ if __name__ == "__main__":
     print("Let's play a best-of-3 series against the computer!")
     time.sleep(1) # Pause for 1 second
 
-    # Initialize overall series scores
-    total_series_player_wins = 0
-    total_series_computer_wins = 0
-    total_series_ties = 0
+    # NEW: Load game data at the start
+    game_data = load_game_data()
+    total_series_player_wins = game_data["total_series_player_wins"]
+    total_series_computer_wins = game_data["total_series_computer_wins"]
+    total_series_ties = game_data["total_series_ties"]
+    saved_custom_rules = game_data["saved_custom_rules"] # Load saved custom rules
 
     # Outer loop for playing multiple series
     while True:
         # --- Game Mode Selection ---
         print("\n--- Choose your game mode ---")
         game_mode_choice = ""
-        while game_mode_choice not in ["1", "2", "3"]:
+        # Offer option to load previously saved custom game
+        custom_game_options = list(saved_custom_rules.keys())
+        custom_game_prompt = ""
+        if custom_game_options:
+            custom_game_prompt = f"\n      '4' to Load a Saved Custom Game ({', '.join(custom_game_options)})"
+        
+        while game_mode_choice not in ["1", "2", "3", "4"] and (game_mode_choice != "4" or not custom_game_options):
             game_mode_choice = input(
                 "Enter '1' for Classic Rock-Paper-Scissors (RPS)\n"
                 "      '2' for The Rock, Wrapping Paper, Shark Tooth Scissors (Custom Fun)\n"
-                "      '3' to Create Your Own Rock-Paper-Scissors Names: "
+                "      '3' to Create New Custom Rock-Paper-Scissors Names"
+                f"{custom_game_prompt}\n" # Include load option if available
+                "Your choice: "
             ).strip()
-            if game_mode_choice not in ["1", "2", "3"]:
-                print("Invalid choice. Please enter '1', '2', or '3'.")
+            
+            if game_mode_choice == "4" and not custom_game_options:
+                print("No saved custom games to load. Please choose another option.")
+                game_mode_choice = "" # Reset to re-prompt
+            elif game_mode_choice not in ["1", "2", "3", "4"]:
+                print("Invalid choice. Please enter '1', '2', '3', or '4' (if available).")
+
+        current_choices = []
+        current_rules = {}
+        mode_name = ""
 
         if game_mode_choice == "1":
             current_choices = list(RPS_RULES.keys())
             current_rules = RPS_RULES
             mode_name = "Classic Rock-Paper-Scissors"
-        elif game_mode_choice == "2": # Now maps to Custom Fun
-            current_choices = list(CUSTOM_RULES.keys())
-            current_rules = CUSTOM_RULES
+        elif game_mode_choice == "2":
+            current_choices = list(CUSTOM_RULES_PRESET.keys())
+            current_rules = CUSTOM_RULES_PRESET
             mode_name = "The Rock, Wrapping Paper, Shark Tooth Scissors (Custom Fun)"
-        else: # game_mode_choice == "3" - Create Your Own Names
+        elif game_mode_choice == "3": # Create New Custom Game
             print("\n--- Create Your Own Game ---")
+            game_name = input("Give your custom game a name (e.g., 'My Animal RPS'): ").strip()
+            if not game_name:
+                print("Game name cannot be empty. Please try again.")
+                continue # Restart outer loop
+
             # Loop until unique names are provided
             while True:
-                name_rock = input("Enter a name for 'Rock': ").lower().strip()
-                name_paper = input("Enter a name for 'Paper': ").lower().strip()
-                name_scissors = input("Enter a name for 'Scissors': ").lower().strip()
+                name_rock = input(f"Enter a name for 'Rock' in '{game_name}': ").lower().strip()
+                name_paper = input(f"Enter a name for 'Paper' in '{game_name}': ").lower().strip()
+                name_scissors = input(f"Enter a name for 'Scissors' in '{game_name}': ").lower().strip()
 
                 # Check for uniqueness and non-empty
                 if not (name_rock and name_paper and name_scissors):
@@ -119,8 +185,27 @@ if __name__ == "__main__":
                 name_scissors: [name_paper]
             }
             current_choices = [name_rock, name_paper, name_scissors]
-            mode_name = f"Custom Game: {name_rock}, {name_paper}, {name_scissors}"
-
+            mode_name = f"Custom Game: {game_name}"
+            # NEW: Save the newly created custom game rules
+            saved_custom_rules[game_name] = current_rules
+            game_data["saved_custom_rules"] = saved_custom_rules # Update game_data dict
+            save_game_data(game_data) # Persist the new custom game
+            
+        elif game_mode_choice == "4": # Load Saved Custom Game
+            if not custom_game_options:
+                print("No custom games saved to load.")
+                continue # Restart outer loop if no options
+            
+            while True:
+                load_name = input(f"Enter the name of the custom game to load ({', '.join(custom_game_options)}): ").strip()
+                if load_name in saved_custom_rules:
+                    current_rules = saved_custom_rules[load_name]
+                    current_choices = list(current_rules.keys())
+                    mode_name = f"Loaded Custom Game: {load_name}"
+                    break
+                else:
+                    print(f"'{load_name}' not found. Please enter a valid saved game name.")
+            
         print(f"You've selected: {mode_name}!")
         time.sleep(1)
 
@@ -192,6 +277,12 @@ if __name__ == "__main__":
         print(f"  Computer Wins: {computer_score}")
         print(f"  Ties: {ties}")
         time.sleep(1)
+
+        # NEW: Update game_data dict with current series totals
+        game_data["total_series_player_wins"] = total_series_player_wins
+        game_data["total_series_computer_wins"] = total_series_computer_wins
+        game_data["total_series_ties"] = total_series_ties
+        save_game_data(game_data) # Persist the updated totals
 
         # Display overall game record
         print("\n--- Overall Game Record ---")
