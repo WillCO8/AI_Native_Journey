@@ -1,66 +1,53 @@
-# My AI-Native Journey
+Rock Paper Scissors
+About This Project
+This is a customizable Rock-Paper-Scissors game developed as a command-line interface (CLI) application. It allows players to enjoy the classic game, a "Custom Fun" mode with unique choices, or even create their own custom game rules. The project includes persistent data storage to track overall series wins and save user-defined custom game configurations across sessions. This mini-project was developed as part of an AI Native Journey, demonstrating foundational Python programming, iterative AI-driven refinement, and practical quality assurance.
 
-## 🌟 Welcome to My AI-Native Development Repository!
+Features
+Multiple Game Modes: Play Classic Rock-Paper-Scissors, a fun "Custom Fun" variant with unique choices, or create and save your own custom game rules.
 
-This repository is my personal space to document and share my progress as I learn and build in the exciting world of AI-Native development. Think of it as my public notebook!
+Best-of-3 Series: Engage in competitive series against the computer, tracking scores until a winner is determined.
 
-Here, I plan to include:
+Persistent Data: Overall player and computer wins, as well as custom game definitions, are saved to a game_data.json file, allowing progress to carry over between sessions.
 
-* **Code Snippets:** Small pieces of code I write to understand concepts.
-* **Mini-Projects:** Simple applications built using AI tools.
-* **Learning Notes:** Summaries of new AI ideas, algorithms, or technologies I explore.
-* **Tool Setup Guides:** How I get different AI tools and environments working.
+User-Friendly Interface: Clear prompts and highly specific error messages ensure a smooth and intuitive gameplay experience.
 
-My goal is to learn how to create smart, AI-powered applications from the ground up!
+How It Works (Core AI-Generated Logic)
+The core logic and structure of this game were iteratively developed and refined with significant assistance from an AI. The AI played a crucial role by providing initial code structures, suggesting efficient ways to manage game flow and data, and critically, refining the user experience.
 
-## 🚀 Getting Started with This Repository
+Specifically, the AI contributed to:
 
-If you're looking at my code or notes, here's how you can get a copy of this repository on your own computer:
+Core Game Mechanics: Generating the fundamental functions for getting user and computer choices, implementing the game rules to determine a winner, and managing the best-of-3 series structure.
 
-1.  **Clone the Repository:** Open your terminal or command prompt and run:
-    ```bash
-    git clone [https://github.com/willco8/AI_Native_Journey.git](https://github.com/willco8/AI_Native_Journey.git)
-    ```
-    (Remember to replace `willco8` with your actual GitHub username, if it's different in the future!)
-2.  **Navigate into the Folder:**
-    ```bash
-    cd AI_Native_Journey
-    ```
-3.  **Install Dependencies (If Any):** As I add projects, I'll list any necessary software or libraries here. For now, this might be empty.
-    ```bash
-    # Example: pip install -r requirements.txt
-    ```
+Data Persistence: Assisting in setting up the JSON-based data saving and loading mechanisms for overall scores and custom game rules, allowing game progress to be stored between play sessions.
 
-## 📁 What You'll Find Inside (My Progress)
+User Experience (UX) Enhancements: Collaborating with me to refine user prompts and error messages. Notably, the AI helped in crafting clear instructions for input and in implementing a highly specific error message that incorporates the user's exact invalid input (e.g., 'lizard' is not a valid option), making the game more intuitive and less frustrating.
 
-This section will grow as I do! Each bullet point will link to a specific part of my journey.
+Modular Design: Guiding the organization of the code into logical functions (get_user_choice, get_computer_choice, determine_winner, load_game_data, save_game_data) to ensure readability and maintainability.
 
-* **Foundations of AI:** My notes and simple examples on core AI concepts.
-    * [Link to a specific notes file, e.g., `notes/AI_Basics.md`]
-* **First AI Model Experiment:** My initial attempt at building a small AI model.
-    * [Link to a project folder, e.g., `projects/SimpleClassifier/README.md`]
-* **Integrating with Gemini API:** How I'm using the Google Gemini API in my projects.
-    * [Link to specific code examples or notes]
+The game leverages Python's built-in random module for computer choices and the json module for persistent data storage. It utilizes fundamental data structures like lists for valid choices and dictionaries for game rules, alongside conditional logic (if/elif/else) for decision-making.
 
-## 🛠️ My Current Toolkit
+How to Run It
+To run this Rock Paper Scissors game, follow these steps:
 
-These are the main technologies and tools I'm focusing on in my learning:
+Save the file: Ensure you have the rps_game.py file saved on your local machine.
 
-* **Programming Language:** Python
-* **AI Frameworks/Libraries:** Google Gemini API, [mention others as you learn, e.g., TensorFlow, PyTorch, LangChain]
-* **Code Editor:** Cursor IDE
-* **Version Control:** Git & GitHub
+Open your terminal or command prompt: Navigate to the directory where you saved rps_game.py.
 
-## 🌱 My Next Steps / Goals
+Run the script: Execute the Python script using the command:
 
-* Understand the basics of Large Language Models (LLMs).
-* Build a simple command-line chatbot.
-* Learn how to use AI for image generation.
-* [Add your own specific learning goals here!]
+python3 rps_game.py
 
-## 🤝 Want to Connect or Suggest?
+Follow the prompts: The game will start in your terminal, and you can follow the on-screen instructions to choose a game mode, enter your name, and make your choices.
 
-This is a personal learning space, but I'm open to constructive feedback or suggestions. Feel free to open an issue on this repository or connect with me!
+Game Data: A file named game_data.json will be created in the same directory to store your overall game record and any custom game rules you create.
 
-* **GitHub Profile:** [https://github.com/willco8](https://github.com/willco8)
-* **LinkedIn (Optional):** [Link to your LinkedIn profile]
+Future Plans / Roadmap
+The immediate plan for this project is to expand beyond Rock Paper Scissors to include other simple games. This will likely involve:
+
+Introducing new game logics and rulesets.
+
+Potentially redesigning the main game selection interface.
+
+Renaming the overall project to reflect the broader collection of games.
+
+Enjoy playing Rock Paper Scissors!

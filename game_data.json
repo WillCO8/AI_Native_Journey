@@ -1,0 +1,18 @@
+{
+    "total_series_player_wins": 1,
+    "total_series_computer_wins": 1,
+    "total_series_ties": 0,
+    "saved_custom_rules": {
+        "Funny": {
+            "spock": [
+                "slither"
+            ],
+            "vapor": [
+                "spock"
+            ],
+            "slither": [
+                "vapor"
+            ]
+        }
+    }
+}
