@@ -25,73 +25,54 @@
       <label>Custom 1: <input type="text" id="custom1" placeholder="Enter name 1" /></label><br>
       <label>Custom 2: <input type="text" id="custom2" placeholder="Enter name 2" /></label><br>
       <label>Custom 3: <input type="text" id="custom3" placeholder="Enter name 3" /></label><br>
-      <button id="apply-custom">Apply Custom Names</button>
     </div>
 
-    <div id="rps-game-area" style="margin-top: 10px;"></div>
-    <div class="result" id="rps-result"></div>
+    <div id="rps-game-area">
+      <p>Make your move:</p>
+      <button onclick="playRPS('rock')">Rock</button>
+      <button onclick="playRPS('paper')">Paper</button>
+      <button onclick="playRPS('scissors')">Scissors</button>
+    </div>
+
+    <p id="rps-result"></p>
   </section>
 
   <!-- ODDS AND EVENS -->
-  <section id="oe-section">
+  <section id="odds-evens-section">
     <h2>Odds and Evens</h2>
-    <label for="oe-mode">Choose Mode:</label>
-    <select id="oe-mode">
-      <option value="classic">Classic</option>
-      <option value="fun">Fun Option</option>
-      <option value="custom">Create Your Own</option>
+    <p>Choose Odds or Evens and a number (0-5):</p>
+    <select id="oe-choice">
+      <option value="odd">Odd</option>
+      <option value="even">Even</option>
     </select>
-
-    <div id="oe-custom-inputs" style="display: none; margin: 10px 0;">
-      <input type="text" id="oe-custom-odd" placeholder="Custom for Odd" />
-      <input type="text" id="oe-custom-even" placeholder="Custom for Even" />
-      <button id="oe-apply-custom">Apply Custom Names</button>
-    </div>
-
-    <div style="margin-top: 10px;">
-      <button id="oe-choose-odd">Odd</button>
-      <button id="oe-choose-even">Even</button>
-    </div>
-
-    <div class="result" id="oe-result"></div>
+    <input type="number" id="oe-user-number" min="0" max="5" />
+    <button onclick="playOddsAndEvens()">Play</button>
+    <p id="oe-result"></p>
   </section>
 
   <!-- COIN FLIP -->
-  <section id="cf-section">
+  <section id="coin-flip-section">
     <h2>Coin Flip</h2>
-    <label for="cf-mode">Choose Mode:</label>
-    <select id="cf-mode">
+    <label for="coin-mode">Choose Mode:</label>
+    <select id="coin-mode">
       <option value="classic">Classic</option>
       <option value="fun">Fun Option</option>
       <option value="custom">Create Your Own</option>
     </select>
 
-    <div id="cf-fun-options" style="display: none; margin: 10px 0;">
-      <label for="cf-fun-select">Choose Rivalry:</label>
-      <select id="cf-fun-select">
-        <option value="2pac-biggie">2Pac vs Biggie</option>
-        <option value="kendrick-drake">Kendrick vs Drake</option>
-        <option value="jim-nas">Jim Jones vs Nas</option>
-      </select>
+    <div id="coin-custom-inputs" style="display: none; margin-top: 10px;">
+      <label>Side 1: <input type="text" id="coin-custom1" placeholder="Enter name for heads" /></label><br>
+      <label>Side 2: <input type="text" id="coin-custom2" placeholder="Enter name for tails" /></label><br>
     </div>
 
-    <div id="cf-custom-inputs" style="display: none; margin: 10px 0;">
-      <input type="text" id="cf-custom-heads" placeholder="Option 1" />
-      <input type="text" id="cf-custom-tails" placeholder="Option 2" />
-      <button id="cf-apply-custom">Apply Custom Names</button>
-    </div>
-
-    <div style="margin-top: 10px;">
-      <button id="cf-flip-btn">Flip Coin</button>
-    </div>
-
-    <div class="result" id="cf-result"></div>
+    <button onclick="playCoinFlip()">Flip Coin</button>
+    <p id="coin-result"></p>
   </section>
 
-  <!-- Scripts -->
-  <script src="./Games/js/rock-paper-scissors.js"></script>
-  <script src="./Games/js/odds-and-evens.js"></script>
-  <script src="./Games/js/coin-flip.js"></script>
+  <!-- Game Logic Scripts -->
+  <script src="rock-paper-scissors.js"></script>
+  <script src="coin-flip.js"></script>
+  <script src="odds-and-evens.js"></script>
 </body>
 
 </html>
