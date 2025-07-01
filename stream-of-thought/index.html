@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stream of Thought</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <h1>Stream of Thought</h1>
+
+  <form id="thought-form">
+    <label for="thought">What are you thinking?</label>
+    <textarea id="thought" rows="5" placeholder="Type your insight, idea, or reflection..."></textarea>
+
+    <label for="category">Where should it go?</label>
+    <select id="category">
+      <option value="weekly">📅 Weekly Reflections</option>
+      <option value="study">📚 Study Guides & Summaries</option>
+      <option value="projects">🚧 Projects & Experiments</option>
+    </select>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div id="confirmation"></div>
+
+  <script>
+    document.getElementById('thought-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const thought = document.getElementById('thought').value.trim();
+      const category = document.getElementById('category').value;
+
+      if (thought === '') {
+        alert('Please enter a thought before submitting.');
+        return;
+      }
+
+      // Clear the textarea
+      document.getElementById('thought').value = '';
+
+      // Display confirmation
+      const confirmation = document.getElementById('confirmation');
+      confirmation.textContent = `Saved to "${category}" folder ✔️`;
+      confirmation.style.display = 'block';
+
+      // Reset confirmation after a few seconds
+      setTimeout(() => {
+        confirmation.textContent = '';
+      }, 3000);
+    });
+  </script>
+
+</body>
+
+</html>
