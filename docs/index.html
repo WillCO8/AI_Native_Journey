@@ -2,17 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stream of Thought</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>Stream of Thought</h1>
-  <form id="thought-form">
-    <label for="thought">Your Thought:</label><br>
-    <textarea id="thought" name="thought" rows="5" cols="33" required></textarea><br><br>
+
+  <form id="thoughtForm">
+    <label for="category">Choose Category:</label>
+    <select id="category" name="category">
+      <option value="Reflections">📅 Weekly Reflections</option>
+      <option value="Study Guide">📚 Study Guides</option>
+      <option value="Project">🚧 Projects</option>
+    </select>
+
+    <br><br>
+
+    <label for="thought">Your Thought:</label>
+    <br>
+    <textarea id="thought" name="thought" rows="5" cols="40"></textarea>
+    <br><br>
+
     <button type="submit">Submit</button>
   </form>
+
   <script src="script.js"></script>
 </body>
 </html>
