@@ -64,8 +64,10 @@
         })
         .then((res) => res.text())
         .then((data) => {
-          alert("Submitted!");
-          document.getElementById("mediaForm").reset();
+          alert(data);
+          if (data.includes("Success")) {
+            document.getElementById("mediaForm").reset();
+          }
         })
         .catch((err) => {
           console.error("Error:", err);
