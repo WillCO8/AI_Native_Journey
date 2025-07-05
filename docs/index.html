@@ -1,32 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stream of Thought</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>Stream of Thought</h1>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+        max-width: 600px;
+        margin: auto;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      h2 {
+        text-align: center;
+      }
+      input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Media Vault</h2>
+    <form id="mediaForm">
+      <input type="text" id="title" placeholder="Title" required />
+      <select id="type">
+        <option value="Movie">Movie</option>
+        <option value="TV Show">TV Show</option>
+        <option value="Song">Song</option>
+        <option value="Book">Book</option>
+      </select>
+      <input type="text" id="recommendedBy" placeholder="Recommended By" required />
+      <button type="submit">Submit</button>
+    </form>
 
-  <form id="thoughtForm">
-    <label for="category">Choose Category:</label>
-    <select id="category" name="category">
-      <option value="Reflections">📅 Weekly Reflections</option>
-      <option value="Study Guide">📚 Study Guides</option>
-      <option value="Project">🚧 Projects</option>
-    </select>
+    <script>
+      document.getElementById("mediaForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const title = document.getElementById("title").value;
+        const type = document.getElementById("type").value;
+        const recommendedBy = document.getElementById("recommendedBy").value;
 
-    <br><br>
-
-    <label for="thought">Your Thought:</label>
-    <br>
-    <textarea id="thought" name="thought" rows="5" cols="40"></textarea>
-    <br><br>
-
-    <button type="submit">Submit</button>
-  </form>
-
-  <script src="script.js"></script>
-</body>
+        fetch("https://script.google.com/macros/s/AKfycbz23x47ESY7h2BF_CvpwJ9LcBPWspXrKzmsHRvUt1XSgEbRz6t7CEpCju9q14s2QXaz/exec", {
+          method: "POST",
+          body: JSON.stringify({ title, type, recommendedBy }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => res.text())
+        .then((data) => {
+          alert("Submitted!");
+          document.getElementById("mediaForm").reset();
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          alert("Submission failed.");
+        });
+      });
+    </script>
+  </body>
 </html>
