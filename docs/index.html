@@ -49,31 +49,35 @@
     </form>
 
     <script>
-      document.getElementById("mediaForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const title = document.getElementById("title").value;
-        const type = document.getElementById("type").value;
-        const recommendedBy = document.getElementById("recommendedBy").value;
+  document.getElementById("mediaForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const title = document.getElementById("title").value;
+    const type = document.getElementById("type").value;
+    const recommendedBy = document.getElementById("recommendedBy").value;
 
-        fetch("https://script.google.com/macros/s/AKfycbyJAw-7Cu5Qu7ugOxajmKmaWcX-0rpZv37GL61W_HJPeqFiDfOKLcuQa_7efW25H2T7/exec", {
-          method: "POST",
-          body: JSON.stringify({ title, type, recommendedBy }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => res.text())
-        .then((data) => {
-          alert(data);
-          if (data.includes("Success")) {
-            document.getElementById("mediaForm").reset();
-          }
-        })
-        .catch((err) => {
-          console.error("Error:", err);
-          alert("Submission failed.");
-        });
-      });
-    </script>
+    fetch("https://script.google.com/macros/s/AKfycbyJAw-7Cu5Qu7ugOxajmKmaWcX-0rpZv37GL61W_HJPeqFiDfOKLcuQa_7efW25H2T7/exec", {
+      method: "POST",
+      body: JSON.stringify({ title, type, recommendedBy }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      console.log("Raw response:", res);
+      return res.text();
+    })
+    .then((data) => {
+      console.log("Returned data:", data);
+      alert(data);
+      if (data.includes("Success")) {
+        document.getElementById("mediaForm").reset();
+      }
+    })
+    .catch((err) => {
+      console.error("Fetch error caught:", err);
+      alert("Submission failed: " + err.message);
+    });
+  });
+</script>
   </body>
 </html>
