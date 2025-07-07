@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Killing Time Games</title>
+    <!-- Tailwind CSS CDN for easy styling and responsiveness -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define iOS-like color palette and shadow variables */
+        :root {
+            --ios-blue: #007AFF;
+            --ios-purple: #AF52DE;
+            --ios-indigo: #5856D6;
+            --ios-yellow: #FFCC00;
+            --ios-orange: #FF9500;
+            --ios-green: #34C759;
+            --ios-red: #FF3B30;
+
+            --ios-bg-primary: #F2F2F7; /* System background */
+            --ios-bg-secondary: #FFFFFF; /* Card/component background */
+            --ios-bg-tertiary: #E9E9EB; /* Inactive/subtle elements */
+
+            --ios-text-primary: #1C1C1E; /* Dark text */
+            --ios-text-secondary: #8E8E93; /* Subtitle/placeholder text */
+
+            --ios-border-light: #E0E0E0; /* Light borders */
+            --ios-shadow-light: rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+            --ios-shadow-medium: rgba(0, 0, 0, 0.08); /* Card shadow */
+            --ios-shadow-strong: rgba(0, 122, 255, 0.25); /* Primary button/active shadow */
+            --ios-shadow-active: rgba(0, 122, 255, 0.35); /* Button hover/active shadow */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif; /* Clean, modern font */
+            background-color: var(--ios-bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better scrolling on small screens */
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px; /* Increased padding */
+            box-sizing: border-box;
+            color: var(--ios-text-primary); /* Default text color */
+        }
+        .game-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--ios-bg-secondary);
+            padding: 32px; /* More padding inside the card */
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 8px 24px var(--ios-shadow-medium); /* Softer, more pronounced shadow */
+            text-align: center;
+            margin-top: 40px; /* More margin from the top */
+            border: 1px solid var(--ios-border-light); /* Subtle border */
+        }
+        h1 {
+            color: var(--ios-text-primary); /* Darker, more substantial text color */
+            background-image: linear-gradient(to right, var(--ios-blue), var(--ios-indigo)); /* Apple blue/purple gradient */
+            padding: 20px; /* Increased padding for the title bar */
+            border-radius: 12px; /* Slightly less rounded than container */
+            box-shadow: 0 4px 12px var(--ios-shadow-medium);
+            font-size: 2.5rem; /* Larger title font */
+            color: white; /* Text color for the gradient background */
+        }
+        h2 {
+            color: var(--ios-blue); /* Apple blue for section titles */
+            font-size: 2rem; /* Larger section title font */
+            margin-bottom: 16px;
+        }
+        p {
+            color: var(--ios-text-primary);
+        }
+        .text-gray-600 { /* For descriptions */
+            color: var(--ios-text-secondary);
+        }
+        .text-gray-700 { /* For labels/mode displays */
+             color: var(--ios-text-primary);
+        }
+        .tab-button {
+            padding: 12px 24px;
+            border-radius: 10px; /* Slightly rounded tabs */
+            font-weight: 500; /* Medium font weight */
+            color: var(--ios-text-secondary);
+            background-color: var(--ios-bg-tertiary);
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 0.5px 1px var(--ios-shadow-light); /* Subtle inner shadow */
+        }
+        .tab-button.active {
+            background-color: var(--ios-blue);
+            color: white;
+            box-shadow: 0 2px 6px var(--ios-shadow-strong); /* Blue shadow for active tab */
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #D1D1D6; /* Darker hover for inactive tabs */
+        }
+        .mode-button {
+            background-color: var(--ios-bg-tertiary);
+            color: var(--ios-text-primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 1px 2px var(--ios-shadow-light);
+        }
+        .mode-button:hover {
+            background-color: #D1D1D6;
+            color: var(--ios-text-primary);
+        }
+        .mode-button.active-mode {
+            background-color: var(--ios-blue) !important;
+            color: white !important;
+            box-shadow: 0 2px 6px var(--ios-shadow-strong);
+        }
+        .custom-rules-container {
+            border: 1px solid var(--ios-border-light);
+            border-radius: 10px;
+            padding: 20px;
+            background-color: var(--ios-bg-primary); /* Uses a lighter background for inner sections */
+            box-shadow: inset 0 1px 3px var(--ios-shadow-light);
+        }
+        .custom-rule-input,
+        select,
+        input[type="number"] {
+            border: 1px solid var(--ios-border-light);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--ios-text-primary);
+            background-color: var(--ios-bg-secondary); /* Very light background */
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .custom-rule-input:focus,
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); /* Softer focus ring */
+        }
+        button:not(.tab-button):not(.mode-button) { /* Generic button styling */
+            background-color: var(--ios-blue);
+            color: white;
+            font-weight: 600; /* Semibold */
+            padding: 12px 28px; /* Larger padding */
+            border-radius: 10px; /* Consistent rounded corners */
+            box-shadow: 0 4px 10px var(--ios-shadow-strong);
+            transition: all 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+        }
+        button:not(.tab-button):not(.mode-button):hover {
+            background-color: #005CE6; /* Darker blue on hover */
+            box-shadow: 0 6px 16px var(--ios-shadow-active);
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+        button:not(.tab-button):not(.mode-button):active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px var(--ios-shadow-strong);
+        }
+        .text-purple-700 { /* Adjusting result text color to a more Apple-like purple */
+            color: var(--ios-indigo);
+        }
+        .text-indigo-700 { /* Adjusting choice display text color to Apple blue */
+            color: var(--ios-blue);
+        }
+        .bg-gray-50 { /* Scoreboard background, similar to tertiary background */
+            background-color: var(--ios-bg-tertiary);
+            border-radius: 12px;
+            box-shadow: inset 0 1px 3px var(--ios-shadow-light);
+            color: var(--ios-text-primary);
+        }
+        /* Specific adjustments for coin flip buttons */
+        .coin-flip-button {
+            background-image: linear-gradient(to bottom right, var(--ios-yellow), var(--ios-orange));
+            box-shadow: 0 4px 10px rgba(255, 153, 0, 0.3);
+        }
+        .coin-flip-button:hover {
+            background-image: linear-gradient(to bottom right, #E6B800, #E08500);
+            box-shadow: 0 6px 16px rgba(255, 153, 0, 0.4);
+        }
+        /* Specific adjustments for odds/evens buttons */
+        .oe-choice-button {
+            background-image: linear-gradient(to bottom right, var(--ios-purple), var(--ios-indigo));
+            box-shadow: 0 4px 10px rgba(88, 86, 214, 0.3);
+        }
+        .oe-choice-button:hover {
+            background-image: linear-gradient(to bottom right, #9E43CD, #4A48B5);
+            box-shadow: 0 6px 16px rgba(88, 86, 214, 0.4);
+        }
+        /* Ensuring messages look good */
+        p.text-sm {
+            color: var(--ios-text-secondary);
+        }
+        p.text-sm.text-red-500 {
+            color: var(--ios-red) !important;
+        }
+        p.text-sm.text-green-600 {
+            color: var(--ios-green) !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen">
+
+    <div class="game-container">
+        <h1 class="font-bold mb-6 text-white">
+            Killing Time Games: Mindless Games to Kill Time
+        </h1>
+
+        <!-- Tab Navigation -->
+        <div class="flex justify-center space-x-4 mb-8">
+            <button id="rpsTab" class="tab-button active">
+                Rock Paper Scissors
+            </button>
+            <button id="coinFlipTab" class="tab-button">
+                Coin Flip
+            </button>
+            <button id="oddsEvensTab" class="tab-button">
+                Odds & Evens
+            </button>
+        </div>
+
+        <!-- Game Sections -->
+        <div id="rpsGame" class="game-section">
+            <h2 class="font-bold mb-4">Rock Paper Scissors</h2>
+            <p class="mb-6">Choose your move and play against the computer!</p>
+            
+            <!-- RPS Mode Selection -->
+            <div class="flex flex-col items-center mb-6 bg-gray-50 p-4 rounded-lg shadow-inner">
+                <h3 class="text-xl font-semibold mb-3">Select Game Mode:</h3>
+                <div class="flex flex-wrap justify-center gap-3 mb-4">
+                    <button id="modeRPSClassic" class="rps-mode-button mode-button active-mode">Classic</button>
+                    <button id="modeRPSCustomFun" class="rps-mode-button mode-button">Fun Option</button>
+                    <button id="modeRPSCreateNew" class="rps-mode-button mode-button">Create New</button>
+                    <button id="modeRPSLoadSaved" class="rps-mode-button mode-button">Load Saved</button>
+                </div>
+
+                <!-- Create New Custom Rules UI -->
+                <div id="createNewRPSRules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Create New Custom Game Names</h4>
+                    <input type="text" id="newRPSGameName" placeholder="Enter game name (e.g., Animals RPS)" class="w-full mb-3 custom-rule-input">
+                    <input type="text" id="customRPSRock" placeholder="Name for 'Rock' (e.g., Lion)" class="w-full mb-2 custom-rule-input">
+                    <input type="text" id="customRPSPaper" placeholder="Name for 'Paper' (e.g., Tree)" class="w-full mb-2 custom-rule-input">
+                    <input type="text" id="customRPSScissors" placeholder="Name for 'Scissors' (e.comg., Axe)" class="w-full mb-3 custom-rule-input">
+                    <button id="saveNewRPSCustomRules">Save & Use New Game</button>
+                    <p id="newRPSCustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+
+                <!-- Load Saved Custom Rules UI -->
+                <div id="loadSavedRPSRules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Load a Saved Custom Game</h4>
+                    <select id="savedRPSGameSelect" class="w-full mb-3 custom-rule-input">
+                        <option value="">-- Select a Saved Game --</option>
+                    </select>
+                    <button id="loadSelectedRPSCustomRules" style="background-color: var(--ios-green); box-shadow: 0 4px 10px rgba(52, 199, 89, 0.25);">Load Selected Game</button>
+                    <p id="loadRPSCustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <p id="rpsCurrentMode" class="text-xl font-semibold mb-4">Current Mode: Classic Rock Paper Scissors</p>
+            <div id="rpsButtonsContainer" class="flex justify-center space-x-4 mb-6">
+                <!-- Buttons will be dynamically updated based on mode -->
+            </div>
+
+            <!-- Game Output -->
+            <div class="text-lg mb-4">
+                <p>You chose: <span id="rpsPlayerChoice" class="font-semibold italic text-indigo-700"></span></p>
+                <p>Computer chose: <span id="rpsComputerChoice" class="font-semibold italic text-indigo-700"></span></p>
+            </div>
+            <p id="rpsResult" class="text-2xl font-bold text-purple-700 mb-4"></p>
+
+            <!-- Scoreboard -->
+            <div class="text-xl font-semibold bg-gray-50 p-4 shadow-inner">
+                Score: <span id="rpsPlayerScore">0</span> - <span id="rpsComputerScore">0</span>
+            </div>
+        </div>
+
+        <div id="coinFlipGame" class="game-section hidden">
+            <h2 class="font-bold mb-4">Coin Flip</h2>
+            <p class="mb-6">Choose your side and see what luck brings!</p>
+
+            <!-- Coin Flip Mode Selection -->
+            <div class="flex flex-col items-center mb-6 bg-gray-50 p-4 rounded-lg shadow-inner">
+                <h3 class="text-xl font-semibold mb-3">Select Game Mode:</h3>
+                <div class="flex flex-wrap justify-center gap-3 mb-4">
+                    <button id="modeCFClassic" class="coin-mode-button mode-button active-mode">Classic</button>
+                    <button id="modeCFCustomFun" class="coin-mode-button mode-button">Fun Option</button>
+                    <button id="modeCFCreateNew" class="coin-mode-button mode-button">Create New</button>
+                    <button id="modeCFLoadSaved" class="coin-mode-button mode-button">Load Saved</button>
+                </div>
+
+                <!-- Custom Fun Presets UI -->
+                <div id="customFunCFRules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Select a Fun Option Preset:</h4>
+                    <select id="presetCFGameSelect" class="w-full mb-3 custom-rule-input">
+                        <option value="">-- Select a Preset --</option>
+                    </select>
+                    <button id="loadSelectedCFPreset" style="background-color: var(--ios-purple); box-shadow: 0 4px 10px rgba(175, 82, 222, 0.25);">Load Preset</button>
+                    <p id="presetCFGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+
+                <!-- Create New Custom Coin Rules UI -->
+                <div id="createNewCFRules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Create New Custom Coin Sides</h4>
+                    <input type="text" id="newCFGameName" placeholder="Enter game name (e.g., Heroes vs Villains)" class="w-full mb-3 custom-rule-input">
+                    <input type="text" id="customCFSide1" placeholder="Name for Side 1 (e.g., Sun)" class="w-full mb-2 custom-rule-input">
+                    <input type="text" id="customCFSide2" placeholder="Name for Side 2 (e.g., Moon)" class="w-full mb-3 custom-rule-input">
+                    <button id="saveNewCFCustomRules">Save & Use New Game</button>
+                    <p id="newCFCustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+
+                <!-- Load Saved Custom Coin Rules UI -->
+                <div id="loadSavedCFRules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Load a Saved Custom Game</h4>
+                    <select id="savedCFGameSelect" class="w-full mb-3 custom-rule-input">
+                        <option value="">-- Select a Saved Game --</option>
+                    </select>
+                    <button id="loadSelectedCFCustomRules" style="background-color: var(--ios-green); box-shadow: 0 4px 10px rgba(52, 199, 89, 0.25);">Load Selected Game</button>
+                    <p id="loadCFCustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <p id="coinFlipCurrentMode" class="text-xl font-semibold mb-4">Current Mode: Classic Coin Flip</p>
+            <div class="flex justify-center space-x-4 mb-6">
+                <button data-choice="Heads" class="coin-flip-button font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 hover:scale-105"></button>
+                <button data-choice="Tails" class="coin-flip-button font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 hover:scale-105"></button>
+            </div>
+
+            <!-- Game Output -->
+            <p id="coinFlipResult" class="text-2xl font-bold text-purple-700 mb-4"></p>
+            <div class="text-xl font-semibold bg-gray-50 p-4 rounded-lg shadow-inner">
+                Wins: <span id="coinFlipWins">0</span> | Losses: <span id="coinFlipLosses">0</span> | Ties: <span id="coinFlipTies">0</span>
+            </div>
+        </div>
+
+        <div id="oddsEvensGame" class="game-section hidden">
+            <h2 class="font-bold mb-4">Odds & Evens</h2>
+            <p class="mb-6">Choose Odds or Evens, pick a number, and see who wins!</p>
+
+            <!-- OE Mode Selection -->
+            <div class="flex flex-col items-center mb-6 bg-gray-50 p-4 rounded-lg shadow-inner">
+                <h3 class="text-xl font-semibold mb-3">Select Game Mode:</h3>
+                <div class="flex flex-wrap justify-center gap-3 mb-4">
+                    <button id="modeOEClassic" class="oe-mode-button mode-button active-mode">Classic</button>
+                    <button id="modeOECustomFun" class="oe-mode-button mode-button">Fun Option</button>
+                    <button id="modeOECreateNew" class="oe-mode-button mode-button">Create New</button>
+                    <button id="modeOELoadSaved" class="oe-mode-button mode-button">Load Saved</button>
+                </div>
+
+                <!-- Create New Custom OE Rules UI -->
+                <div id="createNewOERules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Create New Custom Odds & Evens Names</h4>
+                    <input type="text" id="newOEGameName" placeholder="Enter game name (e.g., Light & Dark)" class="w-full mb-3 custom-rule-input">
+                    <input type="text" id="customOEOdds" placeholder="Name for 'Odds' (e.g., Light)" class="w-full mb-2 custom-rule-input">
+                    <input type="text" id="customOEEvens" placeholder="Name for 'Evens' (e.g., Dark)" class="w-full mb-3 custom-rule-input">
+                    <button id="saveNewOECustomRules">Save & Use New Game</button>
+                    <p id="newOECustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+
+                <!-- Load Saved Custom OE Rules UI -->
+                <div id="loadSavedOERules" class="custom-rules-container hidden w-full">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--ios-blue);">Load a Saved Custom Game</h4>
+                    <select id="savedOEGameSelect" class="w-full mb-3 custom-rule-input">
+                        <option value="">-- Select a Saved Game --</option>
+                    </select>
+                    <button id="loadSelectedOECustomRules" style="background-color: var(--ios-green); box-shadow: 0 4px 10px rgba(52, 199, 89, 0.25);">Load Selected Game</button>
+                    <p id="loadOECustomGameMessage" class="text-sm text-red-500 mt-2"></p>
+                </div>
+            </div>
+
+            <!-- Game Controls -->
+            <p id="oeCurrentMode" class="text-xl font-semibold mb-4">Current Mode: Classic Odds & Evens</p>
+            <div class="flex justify-center space-x-4 mb-6">
+                <button data-choice="odds" class="oe-choice-button font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 hover:scale-105"></button>
+                <button data-choice="evens" class="oe-choice-button font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-200 hover:scale-105"></button>
+            </div>
+            
+            <div class="mb-6">
+                <label for="playerNumber" class="block text-lg font-medium mb-2">Your Number:</label>
+                <input type="number" id="playerNumber" min="1" value="1" class="px-4 py-2 border rounded-lg w-32 text-center text-xl font-bold focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <!-- Game Output -->
+            <div class="text-lg mb-4">
+                <p>You chose: <span id="oePlayerChoice" class="font-semibold italic text-indigo-700"></span></p>
+                <p>Computer chose: <span id="oeComputerChoice" class="font-semibold italic text-indigo-700"></span></p>
+                <p>Sum: <span id="oeSum" class="font-semibold italic text-indigo-700"></span></p>
+            </div>
+            <p id="oeResult" class="text-2xl font-bold text-purple-700 mb-4"></p>
+            
+            <!-- Scoreboard -->
+            <div class="text-xl font-semibold bg-gray-50 p-4 rounded-lg shadow-inner">
+                Wins: <span id="oeWins">0</span> | Losses: <span id="oeLosses">0</span> | Ties: <span id="oeTies">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Utility Functions ---
+        function getLocalStorageItem(key, defaultValue) {
+            const item = localStorage.getItem(key);
+            try {
+                return item ? JSON.parse(item) : defaultValue;
+            } catch (e) {
+                console.error("Error parsing localStorage item", key, e);
+                return defaultValue;
+            }
+        }
+
+        function setLocalStorageItem(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        // --- Tab Switching Logic ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const gameSections = document.querySelectorAll('.game-section');
+
+        function showGame(gameId) {
+            gameSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(gameId).classList.remove('hidden');
+
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(gameId.replace('Game', 'Tab')).classList.add('active');
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const gameId = button.id.replace('Tab', 'Game');
+                showGame(gameId);
+            });
+        });
+
+        // Initialize with RPS game shown
+        showGame('rpsGame');
+
+        // --- Rock Paper Scissors Game Logic ---
+        const RPS_CLASSIC_CHOICES = ['rock', 'paper', 'scissors'];
+        const RPS_CLASSIC_RULES = {
+            'rock': ['scissors'],
+            'paper': ['rock'],
+            'scissors': ['paper']
+        };
+
+        // Updated custom fun choices with capitalization
+        const RPS_CUSTOM_FUN_CHOICES = ["The Rock", "Toilet Paper", "Edward Scissorhands"];
+        const RPS_CUSTOM_FUN_RULES = {
+            "The Rock": ["Edward Scissorhands"],
+            "Toilet Paper": ["The Rock"],
+            "Edward Scissorhands": ["Toilet Paper"]
+        };
+
+        let currentRPSChoices = RPS_CLASSIC_CHOICES;
+        let currentRPSRules = RPS_CLASSIC_RULES;
+        let rpsCurrentModeName = "Classic Rock Paper Scissors";
+
+        let rpsScores = getLocalStorageItem('rpsScores', { player: 0, computer: 0 });
+        let savedCustomRPSRules = getLocalStorageItem('savedCustomRPSRules', {});
+
+        const rpsPlayerScoreElem = document.getElementById('rpsPlayerScore');
+        const rpsComputerScoreElem = document.getElementById('rpsComputerScore');
+        const rpsPlayerChoiceElem = document.getElementById('rpsPlayerChoice');
+        const rpsComputerChoiceElem = document.getElementById('rpsComputerChoice');
+        const rpsResultElem = document.getElementById('rpsResult');
+        const rpsCurrentModeDisplay = document.getElementById('rpsCurrentMode');
+        const rpsButtonsContainer = document.getElementById('rpsButtonsContainer');
+
+        const modeRPSClassicBtn = document.getElementById('modeRPSClassic');
+        const modeRPSCustomFunBtn = document.getElementById('modeRPSCustomFun');
+        const modeRPSCreateNewBtn = document.getElementById('modeRPSCreateNew');
+        const modeRPSLoadSavedBtn = document.getElementById('modeRPSLoadSaved');
+
+        const createNewRPSRulesContainer = document.getElementById('createNewRPSRules');
+        const newRPSGameNameInput = document.getElementById('newRPSGameName');
+        const customRPSRockInput = document.getElementById('customRPSRock');
+        const customRPSPaperInput = document.getElementById('customRPSPaper');
+        const customRPSSciInput = document.getElementById('customRPSScissors');
+        const saveNewRPSCustomRulesBtn = document.getElementById('saveNewRPSCustomRules');
+        const newRPSCustomGameMessage = document.getElementById('newRPSCustomGameMessage');
+
+        const loadSavedRPSRulesContainer = document.getElementById('loadSavedRPSRules');
+        const savedRPSGameSelect = document.getElementById('savedRPSGameSelect');
+        const loadSelectedRPSCustomRulesBtn = document.getElementById('loadSelectedRPSCustomRules');
+        const loadRPSCustomGameMessage = document.getElementById('loadRPSCustomGameMessage');
+
+        function updateRPSScoreboard() {
+            rpsPlayerScoreElem.textContent = rpsScores.player;
+            rpsComputerScoreElem.textContent = rpsScores.computer;
+        }
+
+        function createRPSButtons(choices) {
+            rpsButtonsContainer.innerHTML = ''; // Clear existing buttons
+            choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice; // Use the choice directly (already capitalized)
+                button.dataset.choice = choice;
+                button.classList.add('rps-button', 'font-bold', 'py-3', 'px-6', 'rounded-lg', 'shadow-md', 'transition-all', 'duration-200', 'hover:scale-105');
+                button.addEventListener('click', (e) => playRPS(e.target.dataset.choice));
+                rpsButtonsContainer.appendChild(button);
+            });
+        }
+
+        function setRPSMode(mode, name = "") {
+            createNewRPSRulesContainer.classList.add('hidden');
+            loadSavedRPSRulesContainer.classList.add('hidden');
+            newRPSCustomGameMessage.textContent = "";
+            loadRPSCustomGameMessage.textContent = "";
+
+            rpsButtonsContainer.innerHTML = ''; // Clear buttons initially
+
+            if (mode === 'classic') {
+                currentRPSChoices = RPS_CLASSIC_CHOICES;
+                currentRPSRules = RPS_CLASSIC_RULES;
+                rpsCurrentModeName = "Classic Rock Paper Scissors";
+                createRPSButtons(currentRPSChoices);
+            } else if (mode === 'customFun') {
+                currentRPSChoices = RPS_CUSTOM_FUN_CHOICES;
+                currentRPSRules = RPS_CUSTOM_FUN_RULES;
+                rpsCurrentModeName = "The Rock, Toilet Paper, Edward Scissorhands (Fun Option)"; // Updated mode name
+                createRPSButtons(currentRPSChoices);
+            } else if (mode === 'createNew') {
+                rpsCurrentModeName = "Create New Custom Game"; // This mode doesn't allow playing until saved
+                createNewRPSRulesContainer.classList.remove('hidden');
+                // Don't create game buttons until rules are saved
+                rpsButtonsContainer.innerHTML = '<p class="text-gray-600">Enter custom names above to start playing this mode.</p>';
+            } else if (mode === 'loadSaved') {
+                rpsCurrentModeName = "Load Saved Custom Game"; // This mode doesn't allow playing until loaded
+                loadSavedRPSRulesContainer.classList.remove('hidden');
+                populateSavedRPSGamesDropdown();
+                // Don't create game buttons until rules are loaded
+                rpsButtonsContainer.innerHTML = '<p class="text-gray-600">Select and load a saved game above to start playing.</p>';
+            } else if (mode === 'loadedCustom') { // For when a custom game is actually loaded
+                currentRPSRules = savedCustomRPSRules[name];
+                currentRPSChoices = Object.keys(currentRPSRules);
+                rpsCurrentModeName = `Loaded Custom Game: ${name}`;
+                createRPSButtons(currentRPSChoices);
+            }
+
+            rpsCurrentModeDisplay.textContent = `Current Mode: ${rpsCurrentModeName}`;
+            // Reset scores on mode change
+            rpsScores = { player: 0, computer: 0 };
+            updateRPSScoreboard();
+
+            // Update active mode button styling
+            document.querySelectorAll('.rps-mode-button').forEach(btn => btn.classList.remove('active-mode'));
+            if (mode === 'classic') modeRPSClassicBtn.classList.add('active-mode');
+            else if (mode === 'customFun') modeRPSCustomFunBtn.classList.add('active-mode');
+            else if (mode === 'createNew') modeRPSCreateNewBtn.classList.add('active-mode');
+            else if (mode === 'loadSaved') modeRPSLoadSavedBtn.classList.add('active-mode');
+        }
+
+        function playRPS(playerChoice) {
+            // Convert playerChoice to lowercase for rule lookup, then convert computer's choice as well.
+            const playerChoiceLower = playerChoice.toLowerCase();
+            const computerChoice = currentRPSChoices[Math.floor(Math.random() * currentRPSChoices.length)];
+            const computerChoiceLower = computerChoice.toLowerCase();
+
+
+            rpsPlayerChoiceElem.textContent = playerChoice;
+            rpsComputerChoiceElem.textContent = computerChoice;
+
+            let resultText = '';
+            // For checking rules, we use the lowercase versions to match dictionary keys
+            if (playerChoiceLower === computerChoiceLower) {
+                resultText = "It's a Tie!";
+            } else if (currentRPSRules[playerChoice] && currentRPSRules[playerChoice].includes(computerChoice)) { // Use original casing for rule lookup if rules were defined with it
+                resultText = "You Win!";
+                rpsScores.player++;
+            } else if (currentRPSRules[computerChoice] && currentRPSRules[computerChoice].includes(playerChoice)) { // Use original casing for rule lookup if rules were defined with it
+                resultText = "Computer Wins!";
+                rpsScores.computer++;
+            } else {
+                resultText = "Something went wrong with rules!"; // Fallback for unexpected rule issues
+            }
+            rpsResultElem.textContent = resultText;
+            updateRPSScoreboard();
+            setLocalStorageItem('rpsScores', rpsScores);
+        }
+
+        // RPS Mode Button Event Listeners
+        modeRPSClassicBtn.addEventListener('click', () => setRPSMode('classic'));
+        modeRPSCustomFunBtn.addEventListener('click', () => setRPSMode('customFun'));
+        modeRPSCreateNewBtn.addEventListener('click', () => setRPSMode('createNew'));
+        modeRPSLoadSavedBtn.addEventListener('click', () => setRPSMode('loadSaved'));
+
+        // Save New Custom RPS Rules
+        saveNewRPSCustomRulesBtn.addEventListener('click', () => {
+            const gameName = newRPSGameNameInput.value.trim();
+            // Store custom names in the case they are entered, but rules logic will normalize to lower case.
+            const nameRock = customRPSRockInput.value.trim();
+            const namePaper = customRPSPaperInput.value.trim();
+            const nameScissors = customRPSSciInput.value.trim();
+
+            if (!gameName || !nameRock || !namePaper || !nameScissors) {
+                newRPSCustomGameMessage.textContent = "Please fill in all fields.";
+                newRPSCustomGameMessage.classList.remove('text-green-600');
+                newRPSCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            if (new Set([nameRock.toLowerCase(), namePaper.toLowerCase(), nameScissors.toLowerCase()]).size < 3) {
+                newRPSCustomGameMessage.textContent = "All custom names must be unique (case-insensitive).";
+                newRPSCustomGameMessage.classList.remove('text-green-600');
+                newRPSCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            // Check against both saved and custom fun presets (case-insensitive for game name)
+            const gameNameLower = gameName.toLowerCase();
+            const existingGameNames = Object.keys(savedCustomRPSRules).map(key => key.toLowerCase()).concat(Object.keys(RPS_CUSTOM_FUN_RULES).map(key => key.toLowerCase()));
+            if (existingGameNames.includes(gameNameLower)) {
+                newRPSCustomGameMessage.textContent = "A game with this name already exists (user-saved or preset). Choose a different name.";
+                newRPSCustomGameMessage.classList.remove('text-green-600');
+                newRPSCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+
+            // Store rules using the exact casing entered, but ensure logic that uses them is case-insensitive.
+            const newRules = {
+                [nameRock]: [nameScissors],
+                [namePaper]: [nameRock],
+                [nameScissors]: [namePaper]
+            };
+
+            savedCustomRPSRules[gameName] = newRules;
+            setLocalStorageItem('savedCustomRPSRules', savedCustomRPSRules);
+            newRPSCustomGameMessage.textContent = `Game '${gameName}' saved and loaded!`;
+            newRPSCustomGameMessage.classList.remove('text-red-500');
+            newRPSCustomGameMessage.classList.add('text-green-600');
+            
+            // Immediately use the newly created rules
+            setRPSMode('loadedCustom', gameName);
+            newRPSGameNameInput.value = ''; // Clear fields
+            customRPSRockInput.value = '';
+            customRPSPaperInput.value = '';
+            customRPSSciInput.value = '';
+        });
+
+        // Populate Saved RPS Games Dropdown
+        function populateSavedRPSGamesDropdown() {
+            savedRPSGameSelect.innerHTML = '<option value="">-- Select a Saved Game --</option>';
+            for (const name in savedCustomRPSRules) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                savedRPSGameSelect.appendChild(option);
+            }
+            if (Object.keys(savedCustomRPSRules).length === 0) {
+                loadRPSCustomGameMessage.textContent = "No saved games found.";
+                loadRPSCustomGameMessage.classList.add('text-red-500');
+                loadSelectedRPSCustomRulesBtn.disabled = true; // Disable load button if no games
+            } else {
+                loadRPSCustomGameMessage.textContent = "";
+                loadRPSCustomGameMessage.classList.remove('text-red-500');
+                loadSelectedRPSCustomRulesBtn.disabled = false;
+            }
+        }
+
+        // Load Selected RPS Custom Rules
+        loadSelectedRPSCustomRulesBtn.addEventListener('click', () => {
+            const selectedGameName = savedRPSGameSelect.value;
+            if (selectedGameName && savedCustomRPSRules[selectedGameName]) {
+                setRPSMode('loadedCustom', selectedGameName);
+                loadRPSCustomGameMessage.textContent = `Game '${selectedGameName}' loaded!`;
+                loadRPSCustomGameMessage.classList.remove('text-red-500');
+                loadRPSCustomGameMessage.classList.add('text-green-600');
+            } else {
+                loadRPSCustomGameMessage.textContent = "Please select a valid game to load.";
+                loadRPSCustomGameMessage.classList.add('text-red-500');
+                loadRPSCustomGameMessage.classList.remove('text-green-600');
+            }
+        });
+
+        // Initial setup for RPS
+        setRPSMode('classic');
+        updateRPSScoreboard();
+
+        // --- Coin Flip Game Logic ---
+        const CF_CLASSIC_SIDES = ["Heads", "Tails"];
+        const CF_CUSTOM_FUN_PRESETS = {
+            "Obama and Trump": ["Obama", "Trump"],
+            "2pac and Biggie": ["2pac", "Biggie"],
+            "Drake and Kendrick Lamar": ["Drake", "Kendrick Lamar"]
+        };
+        let currentCFSides = CF_CLASSIC_SIDES;
+        let cfCurrentModeName = "Classic Coin Flip";
+        let currentCFMode = 'classic'; // To track the active mode for conditional logic in dropdown loading
+
+        const coinFlipResultElem = document.getElementById('coinFlipResult');
+        const coinFlipWinsElem = document.getElementById('coinFlipWins');
+        const coinFlipLossesElem = document.getElementById('coinFlipLosses');
+        const coinFlipTiesElem = document.getElementById('coinFlipTies'); 
+
+        const coinFlipButtons = document.querySelectorAll('.coin-flip-button');
+        const coinFlipCurrentModeDisplay = document.getElementById('coinFlipCurrentMode');
+
+        const modeCFClassicBtn = document.getElementById('modeCFClassic');
+        const modeCFCustomFunBtn = document.getElementById('modeCFCustomFun');
+        const modeCFCreateNewBtn = document.getElementById('modeCFCreateNew');
+        const modeCFLoadSavedBtn = document.getElementById('modeCFLoadSaved');
+
+        const customFunCFRulesContainer = document.getElementById('customFunCFRules'); // New element for custom fun presets
+        const presetCFGameSelect = document.getElementById('presetCFGameSelect');
+        const loadSelectedCFPresetBtn = document.getElementById('loadSelectedCFPreset');
+        const presetCFGameMessage = document.getElementById('presetCFGameMessage');
+
+        const createNewCFRulesContainer = document.getElementById('createNewCFRules');
+        const newCFGameNameInput = document.getElementById('newCFGameName');
+        const customCFSide1Input = document.getElementById('customCFSide1');
+        const customCFSide2Input = document.getElementById('customCFSide2');
+        const saveNewCFCustomRulesBtn = document.getElementById('saveNewCFCustomRules');
+        const newCFCustomGameMessage = document.getElementById('newCFCustomGameMessage');
+
+        const loadSavedCFRulesContainer = document.getElementById('loadSavedCFRules');
+        const savedCFGameSelect = document.getElementById('savedCFGameSelect');
+        const loadSelectedCFCustomRulesBtn = document.getElementById('loadSelectedCFCustomRules');
+        const loadCFCustomGameMessage = document.getElementById('loadCFCustomGameMessage');
+
+
+        let coinFlipScores = getLocalStorageItem('coinFlipScores', { wins: 0, losses: 0, ties: 0 });
+        let savedCustomCFRules = getLocalStorageItem('savedCustomCFRules', {});
+
+
+        function updateCoinFlipScoreboard() {
+            coinFlipWinsElem.textContent = coinFlipScores.wins;
+            coinFlipLossesElem.textContent = coinFlipScores.losses;
+            coinFlipTiesElem.textContent = coinFlipScores.ties;
+        }
+
+        function updateCFButtons(side1Name, side2Name) {
+            coinFlipButtons[0].textContent = `Flip Coin (${side1Name})`;
+            coinFlipButtons[0].dataset.choice = side1Name;
+            coinFlipButtons[1].textContent = `Flip Coin (${side2Name})`;
+            coinFlipButtons[1].dataset.choice = side2Name;
+        }
+
+        function populateCFDropdown(dropdownElement, sourceObject) { // Removed headerText as it's now specific per container
+            dropdownElement.innerHTML = '<option value="">-- Select a Game --</option>';
+            for (const name in sourceObject) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                dropdownElement.appendChild(option);
+            }
+        }
+
+        function setCoinFlipMode(mode, name = "") {
+            currentCFMode = mode; // Update the global mode tracker
+
+            // Hide all custom rule containers
+            customFunCFRulesContainer.classList.add('hidden');
+            createNewCFRulesContainer.classList.add('hidden');
+            loadSavedCFRulesContainer.classList.add('hidden');
+            newCFCustomGameMessage.textContent = "";
+            loadCFCustomGameMessage.textContent = "";
+            presetCFGameMessage.textContent = ""; // Clear preset message
+
+            // Clear and disable custom input fields
+            customCFSide1Input.disabled = true;
+            customCFSide2Input.disabled = true;
+            customCFSide1Input.value = "";
+            customCFSide2Input.value = "";
+            newCFGameNameInput.value = ""; 
+            newCFGameNameInput.placeholder = "Enter game name"; // Reset placeholder
+
+            if (mode === 'classic') {
+                currentCFSides = CF_CLASSIC_SIDES;
+                cfCurrentModeName = "Classic Coin Flip";
+                updateCFButtons(currentCFSides[0], currentCFSides[1]);
+            } else if (mode === 'customFun') {
+                cfCurrentModeName = "Fun Option Coin Flip";
+                customFunCFRulesContainer.classList.remove('hidden'); // Show preset dropdown
+                populateCFDropdown(presetCFGameSelect, CF_CUSTOM_FUN_PRESETS);
+                
+                // Initially set buttons to classic until a preset is chosen
+                updateCFButtons(CF_CLASSIC_SIDES[0], CF_CLASSIC_SIDES[1]); 
+                // Set first preset as default if available
+                if (Object.keys(CF_CUSTOM_FUN_PRESETS).length > 0) {
+                    const firstPresetName = Object.keys(CF_CUSTOM_FUN_PRESETS)[0];
+                    currentCFSides = CF_CUSTOM_FUN_PRESETS[firstPresetName];
+                    updateCFButtons(currentCFSides[0], currentCFSides[1]);
+                    presetCFGameSelect.value = firstPresetName; // Select it in dropdown
+                }
+
+            } else if (mode === 'createNew') {
+                cfCurrentModeName = "Create New Custom Coin";
+                createNewCFRulesContainer.classList.remove('hidden');
+                customCFSide1Input.disabled = false; // Enable direct input for new creation
+                customCFSide2Input.disabled = false;
+                customCFSide1Input.placeholder = "Name for Side 1";
+                customCFSide2Input.placeholder = "Name for Side 2";
+                updateCFButtons("Side 1", "Side 2"); // Generic buttons for UI
+            } else if (mode === 'loadSaved') {
+                cfCurrentModeName = "Load Saved Custom Coin";
+                loadSavedCFRulesContainer.classList.remove('hidden');
+                populateCFDropdown(savedCFGameSelect, savedCustomCFRules);
+                updateCFButtons("Side 1", "Side 2"); // Generic buttons for UI
+            } else if (mode === 'loadedCustom') {
+                // This mode is set by selection from dropdowns (either custom fun or user-saved)
+                cfCurrentModeName = `Loaded Custom Game: ${name}`;
+                updateCFButtons(currentCFSides[0], currentCFSides[1]);
+            }
+
+            coinFlipCurrentModeDisplay.textContent = `Current Mode: ${cfCurrentModeName}`;
+            // Reset scores on mode change
+            coinFlipScores = { wins: 0, losses: 0, ties: 0 };
+            updateCoinFlipScoreboard();
+
+            // Update active mode button styling
+            document.querySelectorAll('.coin-mode-button').forEach(btn => btn.classList.remove('active-mode'));
+            if (mode === 'classic') modeCFClassicBtn.classList.add('active-mode');
+            else if (mode === 'customFun') modeCFCustomFunBtn.classList.add('active-mode');
+            else if (mode === 'createNew') modeCFCreateNewBtn.classList.add('active-mode');
+            else if (mode === 'loadSaved') modeCFLoadSavedBtn.classList.add('active-mode');
+        }
+
+        function flipCoin(playerGuessDataChoice) { // playerGuessDataChoice is the actual text of the side chosen
+            const flippedSide = currentCFSides[Math.floor(Math.random() * currentCFSides.length)];
+
+            let resultText = '';
+            const playerGuess = playerGuessDataChoice;
+
+            if (playerGuess.toLowerCase() === flippedSide.toLowerCase()) {
+                resultText = `It's ${flippedSide}! You guessed correctly!`;
+                coinFlipScores.wins++;
+            } else {
+                resultText = `It's ${flippedSide}! You guessed wrong!`;
+                coinFlipScores.losses++;
+            }
+            
+            coinFlipResultElem.textContent = resultText;
+            updateCoinFlipScoreboard();
+            setLocalStorageItem('coinFlipScores', coinFlipScores);
+        }
+
+        document.querySelectorAll('.coin-flip-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                flipCoin(e.target.dataset.choice);
+            });
+        });
+
+        // Coin Flip Mode Button Event Listeners
+        modeCFClassicBtn.addEventListener('click', () => setCoinFlipMode('classic'));
+        modeCFCustomFunBtn.addEventListener('click', () => setCoinFlipMode('customFun'));
+        modeCFCreateNewBtn.addEventListener('click', () => setCoinFlipMode('createNew'));
+        modeCFLoadSavedBtn.addEventListener('click', () => setCoinFlipMode('loadSaved'));
+
+        // Load Selected CF Preset
+        loadSelectedCFPresetBtn.addEventListener('click', () => {
+            const selectedGameName = presetCFGameSelect.value;
+            if (selectedGameName && CF_CUSTOM_FUN_PRESETS[selectedGameName]) {
+                currentCFSides = CF_CUSTOM_FUN_PRESETS[selectedGameName];
+                setCoinFlipMode('loadedCustom', selectedGameName); // Update mode display
+                presetCFGameMessage.textContent = `Preset '${selectedGameName}' loaded!`;
+                presetCFGameMessage.classList.remove('text-red-500');
+                presetCFGameMessage.classList.add('text-green-600');
+            } else {
+                presetCFGameMessage.textContent = "Please select a valid preset to load.";
+                presetCFGameMessage.classList.add('text-red-500');
+                presetCFGameMessage.classList.remove('text-green-600');
+            }
+        });
+
+        // Save New Custom CF Rules
+        saveNewCFCustomRulesBtn.addEventListener('click', () => {
+            const gameName = newCFGameNameInput.value.trim();
+            const nameSide1 = customCFSide1Input.value.trim();
+            const nameSide2 = customCFSide2Input.value.trim();
+
+            if (!gameName || !nameSide1 || !nameSide2) {
+                newCFCustomGameMessage.textContent = "Please fill in all fields.";
+                newCFCustomGameMessage.classList.remove('text-green-600');
+                newCFCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            if (nameSide1.toLowerCase() === nameSide2.toLowerCase()) {
+                newCFCustomGameMessage.textContent = "Custom names must be unique (case-insensitive).";
+                newCFCustomGameMessage.classList.remove('text-green-600');
+                newCFCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            // Check against both saved and custom fun presets
+            if (savedCustomCFRules[gameName] || CF_CUSTOM_FUN_PRESETS[gameName]) {
+                newCFCustomGameMessage.textContent = "A game with this name already exists (user-saved or preset). Choose a different name.";
+                newCFCustomGameMessage.classList.remove('text-green-600');
+                newCFCustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+
+            const newSides = [nameSide1, nameSide2];
+
+            savedCustomCFRules[gameName] = newSides;
+            setLocalStorageItem('savedCustomCFRules', savedCustomCFRules);
+            newCFCustomGameMessage.textContent = `Game '${gameName}' saved and loaded!`;
+            newCFCustomGameMessage.classList.remove('text-red-500');
+            newCFCustomGameMessage.classList.add('text-green-600');
+            
+            // Immediately use the newly created rules
+            setCoinFlipMode('loadedCustom', gameName);
+            newCFGameNameInput.value = ''; // Clear fields
+            customCFSide1Input.value = '';
+            customCFSide2Input.value = '';
+        });
+
+        // Load Selected CF Custom Rules (from user-saved)
+        loadSelectedCFCustomRulesBtn.addEventListener('click', () => {
+            const selectedGameName = savedCFGameSelect.value;
+            if (selectedGameName && savedCustomCFRules[selectedGameName]) {
+                setCoinFlipMode('loadedCustom', selectedGameName);
+                loadCFCustomGameMessage.textContent = `Saved game '${selectedGameName}' loaded!`;
+                loadCFCustomGameMessage.classList.remove('text-red-500');
+                loadCFCustomGameMessage.classList.add('text-green-600');
+            } else {
+                loadCFCustomGameMessage.textContent = "Please select a valid game to load.";
+                loadCFCustomGameMessage.classList.add('text-red-500');
+                loadCFCustomGameMessage.classList.remove('text-green-600');
+            }
+        });
+
+        // Initial setup for Coin Flip
+        setCoinFlipMode('classic');
+        updateCoinFlipScoreboard();
+
+        // --- Odds & Evens Game Logic ---
+        const OE_CLASSIC_NAMES = {
+            odds: "Odds",
+            evens: "Evens"
+        };
+        const OE_CUSTOM_FUN_NAMES = {
+            odds: "Gods",
+            evens: "Demons"
+        };
+        
+        let currentOENames = OE_CLASSIC_NAMES; // Holds the current names (e.g., Odds, Evens, or Gods, Demons)
+
+        const playerNumberInput = document.getElementById('playerNumber');
+        const oePlayerChoiceElem = document.getElementById('oePlayerChoice');
+        const oeComputerChoiceElem = document.getElementById('oeComputerChoice');
+        const oeSumElem = document.getElementById('oeSum');
+        const oeResultElem = document.getElementById('oeResult');
+        const oeWinsElem = document.getElementById('oeWins');
+        const oeLossesElem = document.getElementById('oeLosses');
+        const oeTiesElem = document.getElementById('oeTies');
+
+        const oeChoiceButtons = document.querySelectorAll('.oe-choice-button'); // Select all Odds/Evens choice buttons
+        const oeCurrentModeDisplay = document.getElementById('oeCurrentMode');
+
+        const modeOEClassicBtn = document.getElementById('modeOEClassic');
+        const modeOECustomFunBtn = document.getElementById('modeOECustomFun');
+        const modeOECreateNewBtn = document.getElementById('modeOECreateNew');
+        const modeOELoadSavedBtn = document.getElementById('modeOELoadSaved');
+
+        const createNewOERulesContainer = document.getElementById('createNewOERules');
+        const newOEGameNameInput = document.getElementById('newOEGameName');
+        const customOEOddsInput = document.getElementById('customOEOdds');
+        const customOEEvensInput = document.getElementById('customOEEvens');
+        const saveNewOECustomRulesBtn = document.getElementById('saveNewOECustomRules');
+        const newOECustomGameMessage = document.getElementById('newOECustomGameMessage');
+
+        const loadSavedOERulesContainer = document.getElementById('loadSavedOERules');
+        const savedOEGameSelect = document.getElementById('savedOEGameSelect');
+        const loadSelectedOECustomRulesBtn = document.getElementById('loadSelectedOECustomRules');
+        const loadOECustomGameMessage = document.getElementById('loadOECustomGameMessage');
+
+        let oeScores = getLocalStorageItem('oeScores', { wins: 0, losses: 0, ties: 0 });
+        let savedCustomOERules = getLocalStorageItem('savedCustomOERules', {});
+
+
+        // Ensure playerNumberInput has sensible defaults/limits (already done with min attribute and input listener)
+        playerNumberInput.addEventListener('input', () => {
+            // Ensure input is a number and within 1-10 (or a custom range if implemented later)
+            let val = parseInt(playerNumberInput.value) || 1; // Default to 1 if not a valid number
+            playerNumberInput.value = Math.max(1, Math.min(10, val)); // Keep within 1-10 range
+        });
+
+        function updateOEScoreboard() {
+            oeWinsElem.textContent = oeScores.wins;
+            oeLossesElem.textContent = oeScores.losses;
+            oeTiesElem.textContent = oeScores.ties;
+        }
+
+        // Function to update the text on the Odds/Evens choice buttons
+        function updateOEButtons(oddsName, evensName) {
+            oeChoiceButtons[0].textContent = oddsName;
+            oeChoiceButtons[1].textContent = evensName;
+        }
+
+        function setOEMode(mode, name = "") {
+            createNewOERulesContainer.classList.add('hidden');
+            loadSavedOERulesContainer.classList.add('hidden');
+            newOECustomGameMessage.textContent = "";
+            loadOECustomGameMessage.textContent = "";
+
+            if (mode === 'classic') {
+                currentOENames = OE_CLASSIC_NAMES;
+                oeCurrentModeDisplay.textContent = "Current Mode: Classic Odds & Evens";
+                updateOEButtons(currentOENames.odds, currentOENames.evens);
+            } else if (mode === 'customFun') {
+                currentOENames = OE_CUSTOM_FUN_NAMES; // Correctly set to Gods/Demons
+                oeCurrentModeDisplay.textContent = "Current Mode: Fun Option"; // Title changed to just "Fun Option"
+                updateOEButtons(currentOENames.odds, currentOENames.evens); // This will update buttons to Gods/Demons
+            } else if (mode === 'createNew') {
+                oeCurrentModeDisplay.textContent = "Current Mode: Create New Custom Odds & Evens";
+                createNewOERulesContainer.classList.remove('hidden');
+                // No play buttons until saved
+                updateOEButtons("Odds", "Evens"); // Default names for UI
+            } else if (mode === 'loadSaved') {
+                oeCurrentModeDisplay.textContent = "Current Mode: Load Saved Custom Odds & Evens";
+                loadSavedOERulesContainer.classList.remove('hidden');
+                populateSavedOEGAMESDropdown();
+                // No play buttons until loaded
+                updateOEButtons("Odds", "Evens"); // Default names for UI
+            } else if (mode === 'loadedCustom') { // For when a custom game is actually loaded
+                currentOENames = savedCustomOERules[name];
+                oeCurrentModeDisplay.textContent = `Loaded Custom Game: ${name}`;
+                updateOEButtons(currentOENames.odds, currentOENames.evens);
+            }
+
+            // Reset scores on mode change
+            oeScores = { wins: 0, losses: 0, ties: 0 };
+            updateOEScoreboard();
+
+            // Update active mode button styling
+            document.querySelectorAll('.oe-mode-button').forEach(btn => btn.classList.remove('active-mode'));
+            if (mode === 'classic') modeOEClassicBtn.classList.add('active-mode');
+            else if (mode === 'customFun') modeOECustomFunBtn.classList.add('active-mode');
+            else if (mode === 'createNew') modeOECreateNewBtn.classList.add('active-mode');
+            else if (mode === 'loadSaved') modeOELoadSavedBtn.classList.add('active-mode');
+        }
+
+        function playOddsEvens(playerGuess) {
+            let playerNum = parseInt(playerNumberInput.value);
+            // Ensure playerNum is a valid number, default to 1 if not.
+            if (isNaN(playerNum)) {
+                playerNum = 1; // Default to 1 if input is empty or invalid
+                playerNumberInput.value = playerNum; // Update the input field to reflect the default
+            }
+
+            const min = 1; // Hardcode min/max as inputs are not in HTML.
+            const max = 10;
+            
+            // Ensure numbers are within valid range after custom input
+            const safePlayerNum = Math.max(min, Math.min(max, playerNum));
+            playerNumberInput.value = safePlayerNum; // Update input field if value was adjusted
+
+            const computerNum = Math.floor(Math.random() * (max - min + 1)) + min;
+            const sum = safePlayerNum + computerNum;
+            const isSumEven = sum % 2 === 0;
+
+            // Use currentOENames for display
+            oePlayerChoiceElem.textContent = `${currentOENames[playerGuess]} (You picked ${safePlayerNum})`;
+            oeComputerChoiceElem.textContent = `(Computer picked ${computerNum})`;
+            oeSumElem.textContent = sum;
+
+            let resultText = '';
+            // No ties in Odds & Evens based on standard rules
+            if ((playerGuess === 'evens' && isSumEven) || (playerGuess === 'odds' && !isSumEven)) {
+                resultText = `The sum is ${sum} (${isSumEven ? currentOENames.evens : currentOENames.odds}). You Win!`;
+                oeScores.wins++;
+            } else {
+                resultText = `The sum is ${sum} (${isSumEven ? currentOENames.evens : currentOENames.odds}). Computer Wins!`;
+                oeScores.losses++;
+            }
+            
+            oeResultElem.textContent = resultText;
+            updateOEScoreboard();
+            setLocalStorageItem('oeScores', oeScores);
+        }
+
+        document.querySelectorAll('.oe-choice-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                playOddsEvens(e.target.dataset.choice);
+            });
+        });
+
+        // OE Mode Button Event Listeners
+        modeOEClassicBtn.addEventListener('click', () => setOEMode('classic'));
+        modeOECustomFunBtn.addEventListener('click', () => setOEMode('customFun'));
+        modeOECreateNewBtn.addEventListener('click', () => setOEMode('createNew'));
+        modeOELoadSavedBtn.addEventListener('click', () => setOEMode('loadSaved'));
+
+        // Save New Custom OE Rules
+        saveNewOECustomRulesBtn.addEventListener('click', () => {
+            const gameName = newOEGameNameInput.value.trim();
+            const nameOdds = customOEOddsInput.value.trim(); // Removed .toLowerCase() here for display purposes
+            const nameEvens = customOEEvensInput.value.trim(); // Removed .toLowerCase() here for display purposes
+
+            if (!gameName || !nameOdds || !nameEvens) {
+                newOECustomGameMessage.textContent = "Please fill in all fields.";
+                newOECustomGameMessage.classList.remove('text-green-600');
+                newOECustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            if (nameOdds.toLowerCase() === nameEvens.toLowerCase()) { // Still check uniqueness case-insensitively
+                newOECustomGameMessage.textContent = "Custom names must be unique.";
+                newOECustomGameMessage.classList.remove('text-green-600');
+                newOECustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+            if (savedCustomOERules[gameName]) {
+                newOECustomGameMessage.textContent = "A game with this name already exists. Choose a different name.";
+                newOECustomGameMessage.classList.remove('text-green-600');
+                newOECustomGameMessage.classList.add('text-red-500');
+                return;
+            }
+
+            const newCustomNames = {
+                odds: nameOdds,
+                evens: nameEvens
+            };
+
+            savedCustomOERules[gameName] = newCustomNames;
+            setLocalStorageItem('savedCustomOERules', savedCustomOERules);
+            newOECustomGameMessage.textContent = `Game '${gameName}' saved and loaded!`;
+            newOECustomGameMessage.classList.remove('text-red-500');
+            newOECustomGameMessage.classList.add('text-green-600');
+            
+            // Immediately use the newly created rules
+            setOEMode('loadedCustom', gameName);
+            newOEGameNameInput.value = ''; // Clear fields
+            customOEOddsInput.value = '';
+            customOEEvensInput.value = '';
+        });
+
+        // Populate Saved OE Games Dropdown
+        function populateSavedOEGAMESDropdown() {
+            savedOEGameSelect.innerHTML = '<option value="">-- Select a Saved Game --</option>';
+            for (const name in savedCustomOERules) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                savedOEGameSelect.appendChild(option);
+            }
+            if (Object.keys(savedCustomOERules).length === 0) {
+                loadOECustomGameMessage.textContent = "No saved games found.";
+                loadOECustomGameMessage.classList.add('text-red-500');
+                loadSelectedOECustomRulesBtn.disabled = true; // Disable load button if no games
+            } else {
+                loadOECustomGameMessage.textContent = "";
+                loadOECustomGameMessage.classList.remove('text-red-500');
+                loadSelectedOECustomRulesBtn.disabled = false;
+            }
+        }
+
+        // Load Selected OE Custom Rules
+        loadSelectedOECustomRulesBtn.addEventListener('click', () => {
+            const selectedGameName = savedOEGameSelect.value;
+            if (selectedGameName && savedCustomOERules[selectedGameName]) {
+                setOEMode('loadedCustom', selectedGameName);
+                loadOECustomGameMessage.textContent = `Game '${selectedGameName}' loaded!`;
+                loadOECustomGameMessage.classList.remove('text-red-500');
+                loadOECustomGameMessage.classList.add('text-green-600');
+            } else {
+                loadOECustomGameMessage.textContent = "Please select a valid game to load.";
+                loadOECustomGameMessage.classList.add('text-red-500');
+                loadOECustomGameMessage.classList.remove('text-green-600');
+            }
+        });
+
+        // Initial setup for Odds & Evens
+        setOEMode('classic');
+        updateOEScoreboard();
+    </script>
+</body>
+</html>
