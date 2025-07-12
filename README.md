@@ -1,73 +1,97 @@
-# AI_Native_Journey
+Firebase Cloud Firestore API Exercise
+This repository documents the process of setting up a NoSQL database (Cloud Firestore), adding data, and retrieving a single record via its REST API. This is part of my AI Native Journey, demonstrating fundamental backend interaction.
 
-This repository contains various projects, experiments, and exercises exploring AI, programming logic, and game design.
+1. Firebase Project Setup
+Project Name: MyDatabaseApp (or whatever you named your Firebase project)
 
----
+Project ID: mydatabaseapp-6c085 (Replace with your actual Project ID from Firebase Project Settings)
 
-## 🎯 Elevator Pitch: Killing Time Games
+Database Type: Cloud Firestore (NoSQL, document-oriented)
 
-**“Killing Time Games”** is a simple browser-based app designed to help you pass the time—without pulling you out of the moment. Whether you’re waiting to be called into a job interview or sitting in a hospital lobby, this is your guilt-free way to stay occupied without blasting zombies or doomscrolling.
+Initial Mode: Started in "test mode" for demonstration purposes.
 
-It includes three quick, familiar games—Rock Paper Scissors, Odds and Evens, and Coin Flip—with a twist: you can play the classic versions, choose from humorous themed matchups like *The Rock vs. Toilet Paper*, or even create your own characters and rules.
+2. Cloud Firestore Database Setup & Data Entry
+Collection: products
+A collection named products was created to store product information.
 
-AI helped shape the entire build—from structuring the code to solving logic bugs. It even helped translate ideas into working JavaScript, speeding up development and keeping things fun and frustration-free.
+Documents (Entries):
+Three documents were manually added to the products collection, each with an auto-generated ID.
 
-This isn’t about high scores or boss battles—it’s a pocket-sized distraction with personality, built for real-life waiting rooms, not war zones.
+Document 1 (Laptop):
+{
+  "name": "Laptop",
+  "price": 1200,
+  "inStock": true
+}
 
----
+Document 2 (Smartphone):
+{
+  "name": "Smartphone",
+  "price": 700,
+  "inStock": true
+}
 
-## 🛠️ How It Started vs. How It’s Going
+Document 3 (Headphones):
+{
+  "name": "Headphones",
+  "price": 150,
+  "inStock": false
+}
 
-This project began as a simple Rock Paper Scissors game written in Python as part of a class assignment. But as I explored what I could build with the help of AI, the scope expanded into something more playful and polished. What started as a basic script evolved into **Killing Time Games** — a browser-based app with themed versions, creative customizations, and a clean interface, all designed to offer casual fun without pulling users too far out of real-life moments.
+3. Firebase Security Rules for Public Read Access
+IMPORTANT SECURITY WARNING: The following rule allows anyone on the internet to read your entire database. This is highly insecure for production applications and should only be used for learning and demonstration purposes. For a real application, you would implement much more restrictive rules based on user authentication and authorization.
 
----
+The Firestore security rules were modified to allow public read access:
 
-## 🧠 Python Rock Paper Scissors
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;  // Allows anyone to read data
+      allow write: if false; // Keeps write access restricted
+    }
+  }
+}
 
-A command-line Rock Paper Scissors game built with Python.
+4. Retrieving a Record via REST API
+API Call Used:
+To retrieve a specific document (e.g., the "Laptop" document) from the products collection:
 
-📂 File: `rps_game.py`  
-🔧 Features:
-- Classic rules and a fun custom mode ("The Rock", "Wrapping Paper", "Shark Tooth Scissors")
-- JSON file persistence for tracking data
-- Clean data structures and rule sets
+GET https://firestore.googleapis.com/v1/projects/mydatabaseapp-6c085/databases/(default)/documents/products/zkbvW1cp8zpZVmqw7sx6
 
----
+(Remember to replace mydatabaseapp-6c085 with your actual Firebase Project ID and zkbvW1cp8zpZVmqw7sx6 with the exact Document ID from your successful API call.)
 
-## 🕹️ Killing Time Games (Web Version)
+Successful JSON Response Received:
+This is the actual JSON response received when the above API call was executed successfully:
 
-This is a browser-based version of Rock Paper Scissors with a modern, playful twist — part of the **Killing Time Games** project.
+{
+  "name": "projects/mydatabaseapp-6c085/databases/(default)/documents/products/zkbvW1cp8zpZVmqw7sx6",
+  "fields": {
+    "inStock": {
+      "booleanValue": true
+    },
+    "price": {
+      "integerValue": "1200"
+    },
+    "name": {
+      "stringValue": "Laptop"
+    }
+  },
+  "createTime": "2025-07-12T16:05:16.265244Z",
+  "updateTime": "2025-07-12T16:05:16.265244Z"
+}
 
-📂 Folder: `killing-time-rps/`  
-🎨 Built with: HTML, CSS, JavaScript
+5. The Point of This Exercise
+This exercise serves as a practical demonstration of several core concepts in modern application development:
 
-🧠 Features:
-- **Classic mode**: Rock, Paper, Scissors
-- **Fun mode**: The Rock, Toilet Paper, Edward Scissorhands
-- **Create Your Own**: Custom names and rules
-- **Best-of-3** logic for fair gameplay
+Backend-as-a-Service (BaaS): Utilizing a managed cloud service like Firebase to handle backend infrastructure (database, authentication, etc.), allowing developers to focus on application logic rather than server management.
 
-🚀 To play:  
-Open `index.html` in your browser.
+NoSQL Data Modeling: Understanding the flexible, document-oriented approach of NoSQL databases, where data is stored in JSON-like documents within collections.
 
----
+API Interaction: Learning how applications communicate with backend services using standardized Application Programming Interfaces (APIs), specifically through RESTful HTTP requests. This enables the frontend to request and receive data from the backend.
 
-## 📁 Other Files
+Dynamic Content: The ability to fetch and display data dynamically based on user interactions or application needs, which is crucial for building interactive and responsive web and mobile applications.
 
-- `error_test.py`: Test error handling logic
-- `game_data.json`: Game data used for saving scores
-- `welcome.py` & `welcome_page.html`: Prototype welcome screen for potential game hub
+Database Security: Grasping the importance of security rules to control access to your data, even while demonstrating how to temporarily open access for testing.
 
----
-
-## 📌 Goals
-
-- Build accessible, simple games for entertainment and learning
-- Practice full-stack logic across both Python and JavaScript ecosystems
-- Develop a growing hub of "mindless games to kill time"
-
----
-
-## 📬 Contributions & Feedback
-
-Feel free to fork, clone, or offer suggestions via issues or pull requests. This is an active learning journey — all input welcome!
+This entire process is a foundational step in understanding how data flows in a typical web or mobile application, from storage to retrieval.
