@@ -1,97 +1,55 @@
-Firebase Cloud Firestore API Exercise
-This repository documents the process of setting up a NoSQL database (Cloud Firestore), adding data, and retrieving a single record via its REST API. This is part of my AI Native Journey, demonstrating fundamental backend interaction.
+Picture Puzzle Project Plan
+Here's the documentation for my selected project, the interactive picture puzzle tool:
 
-1. Firebase Project Setup
-Project Name: MyDatabaseApp (or whatever you named your Firebase project)
+Project Pitch
+This tool will allow users to upload any picture and instantly transform it into a digital jigsaw puzzle. Users can then interactively drag and drop the pieces on the screen to reassemble the original image, providing a personalized and engaging puzzle-solving experience directly in their browser.
 
-Project ID: mydatabaseapp-6c085 (Replace with your actual Project ID from Firebase Project Settings)
+Data Plan / Schema
+The core of this tool relies heavily on image data and puzzle configuration. Here's a breakdown of the data elements:
 
-Database Type: Cloud Firestore (NoSQL, document-oriented)
+Original Image Data:
 
-Initial Mode: Started in "test mode" for demonstration purposes.
+Type: Binary image data (e.g., PNG, JPEG).
 
-2. Cloud Firestore Database Setup & Data Entry
-Collection: products
-A collection named products was created to store product information.
+Purpose: The source material for the puzzle.
 
-Documents (Entries):
-Three documents were manually added to the products collection, each with an auto-generated ID.
+Storage (Temporary): Will be loaded into an HTML Canvas for processing. Not persisted to a database in the basic version, but could be for future features (e.g., user galleries).
 
-Document 1 (Laptop):
-{
-  "name": "Laptop",
-  "price": 1200,
-  "inStock": true
-}
+Puzzle Configuration:
 
-Document 2 (Smartphone):
-{
-  "name": "Smartphone",
-  "price": 700,
-  "inStock": true
-}
+rows (Integer): Number of horizontal cuts (e.g., 3, 4, 5).
 
-Document 3 (Headphones):
-{
-  "name": "Headphones",
-  "price": 150,
-  "inStock": false
-}
+columns (Integer): Number of vertical cuts (e.g., 3, 4, 5).
 
-3. Firebase Security Rules for Public Read Access
-IMPORTANT SECURITY WARNING: The following rule allows anyone on the internet to read your entire database. This is highly insecure for production applications and should only be used for learning and demonstration purposes. For a real application, you would implement much more restrictive rules based on user authentication and authorization.
+piece_width (Float): Calculated width of each puzzle piece based on image and column count.
 
-The Firestore security rules were modified to allow public read access:
+piece_height (Float): Calculated height of each puzzle piece based on image and row count.
 
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read: if true;  // Allows anyone to read data
-      allow write: if false; // Keeps write access restricted
-    }
-  }
-}
+Purpose: Defines the complexity and structure of the puzzle.
 
-4. Retrieving a Record via REST API
-API Call Used:
-To retrieve a specific document (e.g., the "Laptop" document) from the products collection:
+Puzzle Piece Data (Array of Objects):
 
-GET https://firestore.googleapis.com/v1/projects/mydatabaseapp-6c085/databases/(default)/documents/products/zkbvW1cp8zpZVmqw7sx6
+id (Integer): Unique identifier for each piece (e.g., 0, 1, 2...).
 
-(Remember to replace mydatabaseapp-6c085 with your actual Firebase Project ID and zkbvW1cp8zpZVmqw7sx6 with the exact Document ID from your successful API call.)
+original_x (Integer): X-coordinate of the top-left corner of the piece in the original image.
 
-Successful JSON Response Received:
-This is the actual JSON response received when the above API call was executed successfully:
+original_y (Integer): Y-coordinate of the top-left corner of the piece in the original image.
 
-{
-  "name": "projects/mydatabaseapp-6c085/databases/(default)/documents/products/zkbvW1cp8zpZVmqw7sx6",
-  "fields": {
-    "inStock": {
-      "booleanValue": true
-    },
-    "price": {
-      "integerValue": "1200"
-    },
-    "name": {
-      "stringValue": "Laptop"
-    }
-  },
-  "createTime": "2025-07-12T16:05:16.265244Z",
-  "updateTime": "2025-07-12T16:05:16.265244Z"
-}
+current_x (Integer): X-coordinate of the top-left corner of the piece's current position on the canvas.
 
-5. The Point of This Exercise
-This exercise serves as a practical demonstration of several core concepts in modern application development:
+current_y (Integer): Y-coordinate of the top-left corner of the piece's current position on the canvas.
 
-Backend-as-a-Service (BaaS): Utilizing a managed cloud service like Firebase to handle backend infrastructure (database, authentication, etc.), allowing developers to focus on application logic rather than server management.
+image_segment (Canvas ImageData/URL): The actual pixel data or a reference to the image segment for that piece.
 
-NoSQL Data Modeling: Understanding the flexible, document-oriented approach of NoSQL databases, where data is stored in JSON-like documents within collections.
+Purpose: Represents the individual movable parts of the puzzle, tracking their correct and current positions.
 
-API Interaction: Learning how applications communicate with backend services using standardized Application Programming Interfaces (APIs), specifically through RESTful HTTP requests. This enables the frontend to request and receive data from the backend.
+User Interaction Data (Collected/Responded To):
 
-Dynamic Content: The ability to fetch and display data dynamically based on user interactions or application needs, which is crucial for building interactive and responsive web and mobile applications.
+is_dragging (Boolean): Flag indicating if a piece is currently being dragged.
 
-Database Security: Grasping the importance of security rules to control access to your data, even while demonstrating how to temporarily open access for testing.
+selected_piece_id (Integer): ID of the piece currently being manipulated.
 
-This entire process is a foundational step in understanding how data flows in a typical web or mobile application, from storage to retrieval.
+Purpose: Drives the drag-and-drop functionality and visual updates.
+
+Open Question
+My main open question right now is regarding the optimal method for handling the "snapping" or "correct placement" logic for puzzle pieces. Should it be based purely on proximity to the correct grid coordinates, or should there be a visual "snap" effect when pieces are close to their correct neighbors, even if not perfectly aligned to the final grid position? This impacts the user experience and the complexity of the drag-and-drop implementation.
