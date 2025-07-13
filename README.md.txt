@@ -5,6 +5,9 @@ Many individuals struggle to emotionally reconnect with their past digital photo
 Solution (your idea)
 Flickhit is a unique web application that allows users to upload personal photos, automatically extracts the date metadata, and then instantly provides a link to the #1 song on the Billboard Hot 100 from that exact week, enabling users to "hear the past" and rediscover their memories with their forgotten soundtracks.
 
+Project Pitch
+Flickhit is more than just a name; I want it to be a verb. When you’re scrolling through pictures with family or friends, I imagine someone saying, “Flickhit that one!” You have to “flickhit” that one. It’s a soundtrack to your pictures and memories, adding sound to the visual aspects and truly capturing the era.
+
 How you plan to use/collect data
 Collection:
 
