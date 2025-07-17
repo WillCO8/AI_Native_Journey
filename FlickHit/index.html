@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>FlickHit 🎵📸</title>
   <style>
     body {
@@ -26,94 +26,99 @@
       background-color: #eef7ff;
     }
     img {
-      margin-top: 20px;
-      max-width: 300px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: block;
+      margin: 30px auto;
+      max-width: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .result {
-      margin-top: 30px;
+      margin-top: 20px;
       font-size: 1.2em;
-    }
-    a {
-      color: #2c3e50;
-      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <h1>FlickHit 🎵📸</h1>
   <div id="dropzone">📸 Click to upload or drag Flick to get Hit</div>
-  <img id="preview" src="" alt="" style="display:none;">
+  <div id="preview"></div>
   <div class="result" id="result">Reading date...</div>
 
+  <!-- Load exifr -->
   <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
+
   <script>
-    const dropzone = document.getElementById('dropzone');
-    const result = document.getElementById('result');
-    const preview = document.getElementById('preview');
+    const dropzone = document.getElementById("dropzone");
+    const resultDiv = document.getElementById("result");
+    const preview = document.getElementById("preview");
 
-    function handleFile(file) {
-      if (!file) return;
+    async function handleFile(file) {
+      resultDiv.textContent = "Reading date...";
+      preview.innerHTML = "";
 
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-        result.textContent = 'Reading date...';
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
 
-        try {
-          const exifData = await exifr.parse(file);
-          const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
-          if (!date) {
-            result.textContent = "No valid photo date found.";
-            return;
-          }
+      try {
+        const exifData = await exifr.parse(file);
+        const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
 
-          const photoDate = new Date(date);
-          const year = photoDate.getFullYear();
-          const month = photoDate.getMonth() + 1;
-          const day = photoDate.getDate();
-
-          const formatted = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-          fetch('chart_1980_2025_full.json')
-            .then(res => res.json())
-            .then(data => {
-              const match = data.find(song => song.date === formatted);
-              if (match) {
-                result.innerHTML = `
-                  📅 Date: <strong>${formatted}</strong><br>
-                  🎵 Song: <strong>${match.song}</strong><br>
-                  👤 Artist: <strong>${match.artist}</strong><br>
-                  🔗 <a href="${match.youtube}" target="_blank">Watch on YouTube</a><br>
-                  🎧 <a href="${match.spotify || '#'}" target="_blank">Listen on Spotify</a><br>
-                  🍎 <a href="${match.apple || '#'}" target="_blank">Listen on Apple Music</a>
-                `;
-              } else {
-                result.textContent = "No song found for this date.";
-              }
-            });
-        } catch (err) {
-          console.error(err);
-          result.textContent = "Error reading EXIF data.";
+        if (!date) {
+          resultDiv.textContent = "No date info found in photo.";
+          return;
         }
-      };
-      reader.readAsDataURL(file);
+
+        const photoDate = new Date(date);
+        const weekStart = new Date(photoDate);
+        weekStart.setDate(photoDate.getDate() - photoDate.getDay());
+
+        const year = weekStart.getFullYear();
+        const month = String(weekStart.getMonth() + 1).padStart(2, '0');
+        const day = String(weekStart.getDate()).padStart(2, '0');
+        const weekKey = `${year}-${month}-${day}`;
+
+        const response = await fetch("chart_1980_2025_full.json");
+        const chartData = await response.json();
+        const entry = chartData.find(song => song.date === weekKey);
+
+        if (entry) {
+          resultDiv.innerHTML = `
+            <strong>📅 ${entry.date}</strong><br>
+            <strong>🎶 "${entry.title}"</strong> by ${entry.artist}<br>
+            <a href="${entry.youtube}" target="_blank">▶️ Watch on YouTube</a>
+          `;
+        } else {
+          resultDiv.textContent = "No song found for that week.";
+        }
+      } catch (error) {
+        resultDiv.textContent = "Error reading EXIF data.";
+        console.error(error);
+      }
     }
 
-    dropzone.addEventListener('click', () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/jpeg';
+    dropzone.addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
       input.onchange = () => handleFile(input.files[0]);
       input.click();
     });
 
-    dropzone.addEventListener('dragover', e => e.preventDefault());
-    dropzone.addEventListener('drop', e => {
+    dropzone.addEventListener("dragover", e => {
       e.preventDefault();
-      handleFile(e.dataTransfer.files[0]);
+      dropzone.style.backgroundColor = "#d0f0ff";
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.style.backgroundColor = "#fff";
+    });
+
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropzone.style.backgroundColor = "#fff";
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
     });
   </script>
 </body>
