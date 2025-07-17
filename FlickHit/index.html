@@ -28,16 +28,15 @@
     img {
       margin-top: 20px;
       max-width: 300px;
-      border-radius: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    .info {
+    .result {
       margin-top: 30px;
-      font-size: 1.1em;
+      font-size: 1.2em;
     }
-    .info a {
-      display: block;
-      margin-top: 10px;
-      color: #007bff;
+    a {
+      color: #2c3e50;
       text-decoration: none;
     }
   </style>
@@ -45,69 +44,77 @@
 <body>
   <h1>FlickHit 🎵📸</h1>
   <div id="dropzone">📸 Click to upload or drag Flick to get Hit</div>
-  <input type="file" id="fileInput" style="display:none" accept="image/*">
-  <img id="preview" src="" alt="" />
-  <div class="info" id="output"></div>
+  <img id="preview" src="" alt="" style="display:none;">
+  <div class="result" id="result">Reading date...</div>
 
   <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
   <script>
     const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('fileInput');
+    const result = document.getElementById('result');
     const preview = document.getElementById('preview');
-    const output = document.getElementById('output');
-    let chartData = [];
 
-    // Replace this with your real GitHub raw link
-    fetch('YOUR_JSON_LINK_HERE')
-      .then(response => response.json())
-      .then(data => { chartData = data; });
+    function handleFile(file) {
+      if (!file) return;
 
-    // Click-to-upload
-    dropzone.addEventListener('click', () => fileInput.click());
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        result.textContent = 'Reading date...';
 
-    // Drag & drop support
+        try {
+          const exifData = await exifr.parse(file);
+          const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
+          if (!date) {
+            result.textContent = "No valid photo date found.";
+            return;
+          }
+
+          const photoDate = new Date(date);
+          const year = photoDate.getFullYear();
+          const month = photoDate.getMonth() + 1;
+          const day = photoDate.getDate();
+
+          const formatted = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+          fetch('chart_1980_2025_full.json')
+            .then(res => res.json())
+            .then(data => {
+              const match = data.find(song => song.date === formatted);
+              if (match) {
+                result.innerHTML = `
+                  📅 Date: <strong>${formatted}</strong><br>
+                  🎵 Song: <strong>${match.song}</strong><br>
+                  👤 Artist: <strong>${match.artist}</strong><br>
+                  🔗 <a href="${match.youtube}" target="_blank">Watch on YouTube</a><br>
+                  🎧 <a href="${match.spotify || '#'}" target="_blank">Listen on Spotify</a><br>
+                  🍎 <a href="${match.apple || '#'}" target="_blank">Listen on Apple Music</a>
+                `;
+              } else {
+                result.textContent = "No song found for this date.";
+              }
+            });
+        } catch (err) {
+          console.error(err);
+          result.textContent = "Error reading EXIF data.";
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    dropzone.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/jpeg';
+      input.onchange = () => handleFile(input.files[0]);
+      input.click();
+    });
+
     dropzone.addEventListener('dragover', e => e.preventDefault());
     dropzone.addEventListener('drop', e => {
       e.preventDefault();
       handleFile(e.dataTransfer.files[0]);
     });
-    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-
-    function handleFile(file) {
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = 'block';
-      output.innerHTML = 'Reading date...';
-
-      exifr.parse(file).then(meta => {
-        const photoDate = new Date(meta?.DateTimeOriginal || file.lastModified);
-        const formattedDate = photoDate.toISOString().split('T')[0];
-        const song = findClosestChartSong(formattedDate);
-
-        if (song) {
-          output.innerHTML = `
-            <strong>📅 Photo Date:</strong> ${formattedDate}<br>
-            <strong>🎵 Song:</strong> ${song.title}<br>
-            <strong>👤 Artist:</strong> ${song.artist}<br>
-            <strong>🏆 Chart Position:</strong> #${song.rank}<br>
-            <strong>💿 Album:</strong> ${song.album}<br>
-            ${song.youtube ? `<a href="${song.youtube}" target="_blank">▶️ Watch on YouTube</a>` : ''}
-            ${song.spotify ? `<a href="${song.spotify}" target="_blank">🎧 Listen on Spotify</a>` : ''}
-            ${song.apple ? `<a href="${song.apple}" target="_blank">🍎 Listen on Apple Music</a>` : ''}
-          `;
-        } else {
-          output.innerHTML = `No chart data found for this photo.`;
-        }
-      });
-    }
-
-    function findClosestChartSong(dateStr) {
-      const targetDate = new Date(dateStr);
-      return chartData.reduce((closest, current) => {
-        const currentDiff = Math.abs(new Date(current.date) - targetDate);
-        const closestDiff = Math.abs(new Date(closest.date) - targetDate);
-        return currentDiff < closestDiff ? current : closest;
-      });
-    }
   </script>
 </body>
 </html>
