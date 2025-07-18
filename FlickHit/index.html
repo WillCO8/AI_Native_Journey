@@ -1,265 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlickHit 🎵📸</title>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif; /* Using Inter font */
-      text-align: center;
-      padding: 20px;
-      background: linear-gradient(to bottom right, #e0f7fa, #bbdefb); /* Light gradient background */
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-    }
-    h1 {
-      font-size: 2.8em;
-      color: #2c3e50;
-      margin-bottom: 15px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-    .tagline {
-      font-size: 1.2em;
-      color: #555;
-      margin-bottom: 30px;
-    }
-    #dropzone {
-      border: 3px dashed #3498db;
-      background-color: #ffffff;
-      padding: 50px;
-      margin: 30px auto;
-      width: 90%; /* Responsive width */
-      max-width: 500px; /* Max width for desktop */
-      cursor: pointer;
-      border-radius: 15px; /* More rounded corners */
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1em;
-      color: #3498db;
-      font-weight: bold;
-    }
-    #dropzone:hover {
-      background-color: #eef7ff;
-      border-color: #2980b9;
-      transform: translateY(-2px);
-    }
-    #preview img {
-      display: block;
-      margin: 30px auto;
-      max-width: 90%; /* Responsive image width */
-      height: auto; /* Maintain aspect ratio */
-      border-radius: 15px; /* More rounded corners */
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      border: 4px solid #fff; /* White border around image */
-    }
-    .result {
-      margin-top: 25px;
-      font-size: 1.3em;
-      color: #2c3e50;
-      background-color: #ffffff;
-      padding: 20px 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      max-width: 600px;
-      width: 90%;
-      line-height: 1.6;
-    }
-    .result strong {
-      color: #e74c3c; /* Highlight important text */
-    }
-    .result a {
-      color: #3498db;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.2s ease;
-    }
-    .result a:hover {
-      color: #2980b9;
-      text-decoration: underline;
-    }
-    .info-message {
-        background-color: #d9edf7;
-        color: #31708f;
-        padding: 10px 20px;
-        border-radius: 10px;
-        margin-top: 20px;
-        font-size: 0.9em;
-        max-width: 600px;
-        width: 90%;
-    }
-    /* Responsive adjustments */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2em;
-      }
-      .tagline {
-        font-size: 1em;
-      }
-      #dropzone {
-        padding: 30px;
-        width: 95%;
-      }
-      .result {
-        font-size: 1em;
-        padding: 15px;
-        width: 95%;
-      }
-    }
-  </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlickHit 🎵📸</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(to bottom right, #e0f7fa, #bbdefb); /* Light gradient background */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        h1 {
+            font-size: 2.8em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .tagline {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        #dropzone {
+            border: 3px dashed #3498db;
+            background-color: #ffffff;
+            padding: 50px;
+            margin: 30px auto;
+            width: 90%; /* Responsive width */
+            max-width: 500px; /* Max width for desktop */
+            cursor: pointer;
+            border-radius: 15px; /* More rounded corners */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            color: #3498db;
+            font-weight: bold;
+        }
+        #dropzone:hover {
+            background-color: #eef7ff;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        #preview img {
+            display: block;
+            margin: 30px auto;
+            max-width: 90%; /* Responsive image width */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 15px; /* More rounded corners */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 4px solid #fff; /* White border around image */
+        }
+        .result {
+            margin-top: 25px;
+            font-size: 1.3em;
+            color: #2c3e50;
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            max-width: 600px;
+            width: 90%;
+            line-height: 1.6;
+            min-height: 100px; /* Ensure space for content */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .result strong {
+            color: #e74c3c; /* Highlight important text */
+        }
+        .result a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+        .result a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        .info-message {
+            background-color: #d9edf7;
+            color: #31708f;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            max-width: 600px;
+            width: 90%;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            .tagline {
+                font-size: 1em;
+            }
+            #dropzone {
+                padding: 30px;
+                width: 95%;
+            }
+            .result {
+                font-size: 1em;
+                padding: 15px;
+                width: 95%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>FlickHit 🎵📸</h1>
-  <p class="tagline">Hear the Moment: Your Photo's #1 Hit</p>
-  <div class="info-message">FlickHit temporarily reads only the date from your photo's metadata to find related cultural data. Your photo file is never stored.</div>
-  <div id="dropzone">📸 Click to upload or drag your photo here</div>
-  <div id="preview"></div>
-  <div class="result" id="result">Upload a photo to begin...</div>
+    <h1>FlickHit 🎵📸</h1>
+    <p class="tagline">Hear the Moment: Your Photo's #1 Hit</p>
+    <div class="info-message">FlickHit first checks your photo's date for a #1 hit. If no date, AI identifies music from the image. Your photo file is never stored.</div>
+    <div id="dropzone">📸 Click to upload or drag Flick to Hear Hit</div>
+    <div id="preview"></div>
 
-  <!-- Load exifr library for EXIF data parsing -->
-  <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
+    <div class="result" id="result">Upload a photo to begin...</div>
 
-  <script>
-    const dropzone = document.getElementById("dropzone");
-    const resultDiv = document.getElementById("result");
-    const preview = document.getElementById("preview");
+    <!-- Load exifr library for EXIF data parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
 
-    // The raw URL for your JSON data on GitHub
-    const CHART_DATA_URL = "https://raw.githubusercontent.com/WillCO8/AI_Native_Journey/refs/heads/main/FlickHit/chart_1980_2025_full.json";
-    let chartData = null; // To store the fetched JSON data
+    <script>
+        const dropzone = document.getElementById("dropzone");
+        const resultDiv = document.getElementById("result");
+        const preview = document.getElementById("preview");
 
-    // Function to fetch the JSON data once
-    async function loadChartData() {
-      if (chartData) return; // Already loaded
+        // The raw URL for your JSON data on GitHub
+        const CHART_DATA_URL = "https://raw.githubusercontent.com/WillCO8/AI_Native_Journey/refs/heads/main/FlickHit/chart_1980_2025_full.json";
+        let chartData = null; // To store the fetched JSON data
 
-      resultDiv.textContent = "Loading song data...";
-      try {
-        const response = await fetch(CHART_DATA_URL);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        chartData = await response.json();
-        resultDiv.textContent = "Upload a photo to begin..."; // Reset message after loading
-      } catch (error) {
-        resultDiv.textContent = "Error loading song data. Please try again later.";
-        console.error("Error fetching chart data:", error);
-      }
-    }
-
-    async function handleFile(file) {
-      if (!chartData) {
-        resultDiv.textContent = "Still loading song data. Please wait...";
-        await loadChartData(); // Try to load if not already
-        if (!chartData) { // If still null after attempting to load
-            resultDiv.textContent = "Failed to load song data. Cannot process photo.";
-            return;
-        }
-      }
-
-      resultDiv.innerHTML = "Reading photo data...";
-      preview.innerHTML = ""; // Clear previous image
-
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.alt = "Uploaded photo";
-      preview.appendChild(img);
-
-      try {
-        const exifData = await exifr.parse(file);
-        const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
-
-        if (!date) {
-          resultDiv.innerHTML = "<strong>No date information found in this photo.</strong><br>Please upload a photo with EXIF 'DateTimeOriginal' metadata.";
-          return;
+        // Function to display messages (loading, error, results)
+        function displayMessage(htmlContent, isLoading = false, isError = false) {
+            resultDiv.innerHTML = ''; // Clear previous content
+            if (isLoading) {
+                const spinner = document.createElement('div');
+                spinner.classList.add('loading-spinner');
+                resultDiv.appendChild(spinner);
+                const loadingText = document.createElement('p');
+                loadingText.textContent = htmlContent;
+                resultDiv.appendChild(loadingText);
+            } else if (isError) {
+                const errorText = document.createElement('p');
+                errorText.classList.add('error-message');
+                errorText.innerHTML = `<strong>Error:</strong> ${htmlContent}`;
+                resultDiv.appendChild(errorText);
+            } else {
+                resultDiv.innerHTML = htmlContent;
+            }
         }
 
-        const photoDate = new Date(date);
-        // Calculate the Saturday of the week the photo was taken
-        // getDay() returns 0 for Sunday, 6 for Saturday
-        const dayOfWeek = photoDate.getDay();
-        const daysSinceSaturday = (dayOfWeek + 1) % 7; // Days passed since last Saturday (0 for Saturday, 1 for Sunday, ..., 6 for Friday)
-        const saturdayDate = new Date(photoDate);
-        saturdayDate.setDate(photoDate.getDate() - daysSinceSaturday);
+        // Function to fetch the JSON data once
+        async function loadChartData() {
+            if (chartData) return; // Already loaded
 
-        const year = saturdayDate.getFullYear();
-        const month = String(saturdayDate.getMonth() + 1).padStart(2, '0');
-        const day = String(saturdayDate.getDate()).padStart(2, '0');
-        const weekKey = `${year}-${month}-${day}`;
-
-        // Access the song data directly using the weekKey
-        const entry = chartData[weekKey];
-
-        if (entry) {
-          resultDiv.innerHTML = `
-            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
-            <br>
-            <strong>🎶 The #1 Hit from that week was:</strong><br>
-            <strong>"${entry.title}"</strong> by ${entry.artist}<br>
-            <br>
-            <a href="${entry.youtube}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
-            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; margin-left: 10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart</a>
-          `;
-        } else {
-          resultDiv.innerHTML = `
-            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
-            <br>
-            No #1 song found in our database for the week of ${weekKey}.<br>
-            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart for this date</a>
-          `;
+            displayMessage("Loading song data...", true);
+            try {
+                const response = await fetch(CHART_DATA_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                chartData = await response.json();
+                console.log("Chart data loaded successfully:", chartData); // Log loaded data
+                displayMessage("Upload a photo to begin..."); // Reset message after loading
+            } catch (error) {
+                displayMessage("Error loading song data. Please try again later.", false, true);
+                console.error("Error fetching chart data:", error);
+            }
         }
-      } catch (error) {
-        resultDiv.innerHTML = "<strong>Error processing photo.</strong><br>Please ensure it's a valid image file with readable EXIF data.";
-        console.error("Error in handleFile:", error);
-      } finally {
-        // Revoke the object URL to free up memory
-        if (img.src && img.src.startsWith('blob:')) {
-            URL.revokeObjectURL(img.src);
+
+        async function handleFile(file) {
+            displayMessage("Processing photo...", true);
+            preview.innerHTML = ""; // Clear previous image
+
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.alt = "Uploaded photo";
+            preview.appendChild(img);
+
+            try {
+                // First, try to get date from EXIF data
+                const exifData = await exifr.parse(file);
+                const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
+
+                if (date && chartData) {
+                    const photoDate = new Date(date);
+                    // Calculate the Saturday of the week the photo was taken
+                    const dayOfWeek = photoDate.getDay(); // 0 for Sunday, 6 for Saturday
+                    const daysSinceSaturday = (dayOfWeek + 1) % 7; // Days passed since last Saturday
+                    const saturdayDate = new Date(photoDate);
+                    saturdayDate.setDate(photoDate.getDate() - daysSinceSaturday);
+
+                    const year = saturdayDate.getFullYear();
+                    const month = String(saturdayDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(saturdayDate.getDate()).padStart(2, '0');
+                    const weekKey = `${year}-${month}-${day}`;
+
+                    console.log("Calculated weekKey:", weekKey); // Log the calculated week key
+
+                    // Access the entry directly as an object
+                    const entry = chartData[weekKey]; 
+                    console.log("Entry from chartData for weekKey:", entry); // Log the entry found
+
+                    if (entry && entry.title && entry.artist && entry.youtube) { // Ensure properties exist
+                        displayMessage(`
+                            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
+                            <br>
+                            <strong>🎶 The #1 Hit from that week was:</strong><br>
+                            <strong>"${entry.title}"</strong> by ${entry.artist}<br>
+                            <br>
+                            <a href="${entry.youtube}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
+                            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; margin-left: 10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart</a>
+                        `);
+                    } else {
+                        // If date found but no complete entry in chart, still offer Billboard link
+                        displayMessage(`
+                            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
+                            <br>
+                            No #1 song found in our database for the week of ${weekKey}.<br>
+                            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart for this date</a>
+                        `);
+                    }
+                } else {
+                    // If no EXIF date or chart data not loaded/available, fall back to AI image analysis
+                    displayMessage("No date found or chart data unavailable. Using AI to identify music from image content...", true);
+                    await processImageWithAI(file);
+                }
+            } catch (error) {
+                console.error("Error in handleFile (EXIF or initial processing):", error);
+                // If EXIF parsing fails, try AI as a fallback
+                displayMessage("Could not read photo date. Attempting AI analysis...", true);
+                await processImageWithAI(file);
+            } finally {
+                // Revoke the object URL to free up memory
+                if (img.src && img.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.src);
+                }
+            }
         }
-      }
-    }
 
-    // Event listeners for file upload
-    dropzone.addEventListener("click", () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.onchange = () => {
-        if (input.files.length > 0) {
-          handleFile(input.files[0]);
+        // Function to process the uploaded file using AI (for when EXIF date is not available)
+        async function processImageWithAI(file) {
+            try {
+                // Convert image to Base64
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                await new Promise((resolve, reject) => {
+                    reader.onloadend = resolve;
+                    reader.onerror = reject;
+                });
+
+                const base64ImageData = reader.result.split(',')[1]; // Get the Base64 part
+
+                // --- LLM Call: Image Understanding for Music Info ---
+                const musicPrompt = "Analyze the text and visual elements in this image to identify the artist, song title, and album. Focus on any visible music player interfaces, album art, or song listings. Respond in JSON format with keys 'artist', 'song', and 'album'. If any information is not found or unclear, use 'N/A' for that specific field.";
+                const chatHistoryMusic = [{
+                    role: "user",
+                    parts: [
+                        { text: musicPrompt },
+                        { inlineData: { mimeType: file.type, data: base64ImageData } }
+                    ]
+                }];
+
+                const musicPayload = {
+                    contents: chatHistoryMusic,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "artist": { "type": "STRING" },
+                                "song": { "type": "STRING" },
+                                "album": { "type": "STRING" }
+                            },
+                            "propertyOrdering": ["artist", "song", "album"]
+                        }
+                    }
+                };
+
+                const apiKey = ""; // API key is provided by the Canvas runtime
+                const musicApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const musicResponse = await fetch(musicApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(musicPayload)
+                });
+
+                const musicResult = await musicResponse.json();
+
+                let artist = 'N/A';
+                let song = 'N/A';
+                let album = 'N/A';
+
+                if (musicResult.candidates && musicResult.candidates.length > 0 &&
+                    musicResult.candidates[0].content && musicResult.candidates[0].content.parts &&
+                    musicResult.candidates[0].content.parts.length > 0) {
+                    const musicInfoJson = musicResult.candidates[0].content.parts[0].text;
+                    const parsedMusicInfo = JSON.parse(musicInfoJson);
+                    
+                    artist = parsedMusicInfo.artist || 'N/A';
+                    song = parsedMusicInfo.song || 'N/A';
+                    album = parsedMusicInfo.album || 'N/A';
+                } else {
+                    displayMessage("AI could not identify music from the image content. Please try another photo.", false, true);
+                    return;
+                }
+
+                // --- Generate YouTube Search Link (Directly Constructed) ---
+                let youtubeSearchQueryParts = [];
+                if (song !== 'N/A') youtubeSearchQueryParts.push(song);
+                if (artist !== 'N/A') youtubeSearchQueryParts.push(artist);
+                if (album !== 'N/A') youtubeSearchQueryParts.push(album + ' album');
+                
+                let finalYoutubeQuery = youtubeSearchQueryParts.join(' ');
+
+                if (finalYoutubeQuery.trim() === '') {
+                    finalYoutubeQuery = "popular music video"; // Fallback if AI couldn't identify anything
+                }
+                
+                const youtubeLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(finalYoutubeQuery)}`;
+
+                // Display results from AI analysis
+                displayMessage(`
+                    <p><strong>🎶 Music Details (AI Analysis):</strong></p>
+                    <p><strong>Artist:</strong> ${artist}</p>
+                    <p><strong>Song:</strong> ${song}</p>
+                    <p><strong>Album:</strong> ${album}</p>
+                    <br>
+                    <a href="${youtubeLink}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
+                `);
+
+            } catch (error) {
+                console.error("Error processing image with AI:", error);
+                displayMessage("An error occurred during AI analysis. Please try again.", false, true);
+            } finally {
+                // Revoke the object URL to free up memory
+                if (img.src && img.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.src);
+                }
+            }
         }
-      };
-      input.click();
-    });
 
-    dropzone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropzone.style.backgroundColor = "#d0f0ff";
-    });
+        // Event listeners for file upload
+        dropzone.addEventListener("click", () => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = () => {
+                if (input.files.length > 0) {
+                    handleFile(input.files[0]);
+                }
+            };
+            input.click();
+        });
 
-    dropzone.addEventListener("dragleave", () => {
-      dropzone.style.backgroundColor = "#ffffff";
-    });
+        dropzone.addEventListener("dragover", e => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = "#d0f0ff";
+        });
 
-    dropzone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropzone.style.backgroundColor = "#ffffff";
-      const file = e.dataTransfer.files[0];
-      if (file) {
-        handleFile(file);
-      }
-    });
+        dropzone.addEventListener("dragleave", () => {
+            dropzone.style.backgroundColor = "#ffffff";
+        });
 
-    // Load chart data as soon as the page loads
-    document.addEventListener('DOMContentLoaded', loadChartData);
-  </script>
+        dropzone.addEventListener("drop", e => {
+            e.preventDefault();
+            dropzone.style.backgroundColor = "#ffffff";
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        // Load chart data as soon as the page loads
+        document.addEventListener('DOMContentLoaded', loadChartData);
+    </script>
 </body>
 </html>
