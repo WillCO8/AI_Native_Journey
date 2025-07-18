@@ -143,7 +143,7 @@
 <body>
     <h1>FlickHit 🎵📸</h1>
     <p class="tagline">Hear the Moment: Your Photo's #1 Hit</p>
-    <div class="info-message">FlickHit first checks your photo's date for a #1 hit. If no date, AI identifies music from the image. Your photo file is never stored.</div>
+    <div class="info-message">FlickHit reads your photo's date to find the #1 hit from that week in our database. Your photo file is never stored.</div>
     <div id="dropzone">📸 Click to upload or drag Flick to Hear Hit</div>
     <div id="preview"></div>
 
@@ -210,162 +210,64 @@
             preview.appendChild(img);
 
             try {
-                // First, try to get date from EXIF data
+                // Try to get date from EXIF data
                 const exifData = await exifr.parse(file);
                 const date = exifData?.DateTimeOriginal || exifData?.CreateDate;
 
-                if (date && chartData) {
-                    const photoDate = new Date(date);
-                    // Calculate the Saturday of the week the photo was taken
-                    const dayOfWeek = photoDate.getDay(); // 0 for Sunday, 6 for Saturday
-                    const daysSinceSaturday = (dayOfWeek + 1) % 7; // Days passed since last Saturday
-                    const saturdayDate = new Date(photoDate);
-                    saturdayDate.setDate(photoDate.getDate() - daysSinceSaturday);
-
-                    const year = saturdayDate.getFullYear();
-                    const month = String(saturdayDate.getMonth() + 1).padStart(2, '0');
-                    const day = String(saturdayDate.getDate()).padStart(2, '0');
-                    const weekKey = `${year}-${month}-${day}`;
-
-                    console.log("Calculated weekKey:", weekKey); // Log the calculated week key
-
-                    // Access the entry directly as an object
-                    const entry = chartData[weekKey]; 
-                    console.log("Entry from chartData for weekKey:", entry); // Log the entry found
-
-                    if (entry && entry.title && entry.artist && entry.youtube) { // Ensure properties exist
-                        displayMessage(`
-                            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
-                            <br>
-                            <strong>🎶 The #1 Hit from that week was:</strong><br>
-                            <strong>"${entry.title}"</strong> by ${entry.artist}<br>
-                            <br>
-                            <a href="${entry.youtube}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
-                            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; margin-left: 10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart</a>
-                        `);
-                    } else {
-                        // If date found but no complete entry in chart, still offer Billboard link
-                        displayMessage(`
-                            <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
-                            <br>
-                            No #1 song found in our database for the week of ${weekKey}.<br>
-                            <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart for this date</a>
-                        `);
-                    }
-                } else {
-                    // If no EXIF date or chart data not loaded/available, fall back to AI image analysis
-                    displayMessage("No date found or chart data unavailable. Using AI to identify music from image content...", true);
-                    await processImageWithAI(file);
-                }
-            } catch (error) {
-                console.error("Error in handleFile (EXIF or initial processing):", error);
-                // If EXIF parsing fails, try AI as a fallback
-                displayMessage("Could not read photo date. Attempting AI analysis...", true);
-                await processImageWithAI(file);
-            } finally {
-                // Revoke the object URL to free up memory
-                if (img.src && img.src.startsWith('blob:')) {
-                    URL.revokeObjectURL(img.src);
-                }
-            }
-        }
-
-        // Function to process the uploaded file using AI (for when EXIF date is not available)
-        async function processImageWithAI(file) {
-            try {
-                // Convert image to Base64
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-
-                await new Promise((resolve, reject) => {
-                    reader.onloadend = resolve;
-                    reader.onerror = reject;
-                });
-
-                const base64ImageData = reader.result.split(',')[1]; // Get the Base64 part
-
-                // --- LLM Call: Image Understanding for Music Info ---
-                const musicPrompt = "Analyze the text and visual elements in this image to identify the artist, song title, and album. Focus on any visible music player interfaces, album art, or song listings. Respond in JSON format with keys 'artist', 'song', and 'album'. If any information is not found or unclear, use 'N/A' for that specific field.";
-                const chatHistoryMusic = [{
-                    role: "user",
-                    parts: [
-                        { text: musicPrompt },
-                        { inlineData: { mimeType: file.type, data: base64ImageData } }
-                    ]
-                }];
-
-                const musicPayload = {
-                    contents: chatHistoryMusic,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "artist": { "type": "STRING" },
-                                "song": { "type": "STRING" },
-                                "album": { "type": "STRING" }
-                            },
-                            "propertyOrdering": ["artist", "song", "album"]
-                        }
-                    }
-                };
-
-                const apiKey = ""; // API key is provided by the Canvas runtime
-                const musicApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const musicResponse = await fetch(musicApiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(musicPayload)
-                });
-
-                const musicResult = await musicResponse.json();
-
-                let artist = 'N/A';
-                let song = 'N/A';
-                let album = 'N/A';
-
-                if (musicResult.candidates && musicResult.candidates.length > 0 &&
-                    musicResult.candidates[0].content && musicResult.candidates[0].content.parts &&
-                    musicResult.candidates[0].content.parts.length > 0) {
-                    const musicInfoJson = musicResult.candidates[0].content.parts[0].text;
-                    const parsedMusicInfo = JSON.parse(musicInfoJson);
-                    
-                    artist = parsedMusicInfo.artist || 'N/A';
-                    song = parsedMusicInfo.song || 'N/A';
-                    album = parsedMusicInfo.album || 'N/A';
-                } else {
-                    displayMessage("AI could not identify music from the image content. Please try another photo.", false, true);
+                if (!date) {
+                    displayMessage("<strong>No date information found in this photo.</strong><br>Please upload a photo with EXIF 'DateTimeOriginal' metadata.", false, true);
                     return;
                 }
 
-                // --- Generate YouTube Search Link (Directly Constructed) ---
-                let youtubeSearchQueryParts = [];
-                if (song !== 'N/A') youtubeSearchQueryParts.push(song);
-                if (artist !== 'N/A') youtubeSearchQueryParts.push(artist);
-                if (album !== 'N/A') youtubeSearchQueryParts.push(album + ' album');
-                
-                let finalYoutubeQuery = youtubeSearchQueryParts.join(' ');
-
-                if (finalYoutubeQuery.trim() === '') {
-                    finalYoutubeQuery = "popular music video"; // Fallback if AI couldn't identify anything
+                if (!chartData) {
+                    displayMessage("Song data not loaded. Please wait and try again.", false, true);
+                    await loadChartData(); // Attempt to load if not already
+                    if (!chartData) {
+                        displayMessage("Failed to load song data. Cannot process photo.", false, true);
+                        return;
+                    }
                 }
-                
-                const youtubeLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(finalYoutubeQuery)}`;
 
-                // Display results from AI analysis
-                displayMessage(`
-                    <p><strong>🎶 Music Details (AI Analysis):</strong></p>
-                    <p><strong>Artist:</strong> ${artist}</p>
-                    <p><strong>Song:</strong> ${song}</p>
-                    <p><strong>Album:</strong> ${album}</p>
-                    <br>
-                    <a href="${youtubeLink}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
-                `);
+                const photoDate = new Date(date);
+                // Calculate the Saturday of the week the photo was taken
+                const dayOfWeek = photoDate.getDay(); // 0 for Sunday, 6 for Saturday
+                const daysSinceSaturday = (dayOfWeek + 1) % 7; // Days passed since last Saturday
+                const saturdayDate = new Date(photoDate);
+                saturdayDate.setDate(photoDate.getDate() - daysSinceSaturday);
 
+                const year = saturdayDate.getFullYear();
+                const month = String(saturdayDate.getMonth() + 1).padStart(2, '0');
+                const day = String(saturdayDate.getDate()).padStart(2, '0');
+                const weekKey = `${year}-${month}-${day}`;
+
+                console.log("Calculated weekKey:", weekKey); // Log the calculated week key
+
+                // Access the entry directly as an object
+                const entry = chartData[weekKey]; 
+                console.log("Entry from chartData for weekKey:", entry); // Log the entry found
+
+                if (entry && entry.title && entry.artist && entry.youtube) { // Ensure properties exist
+                    displayMessage(`
+                        <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
+                        <br>
+                        <strong>🎶 The #1 Hit from that week was:</strong><br>
+                        <strong>"${entry.title}"</strong> by ${entry.artist}<br>
+                        <br>
+                        <a href="${entry.youtube}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #e74c3c; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">▶️ Watch on YouTube</a>
+                        <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; margin-left: 10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart</a>
+                    `);
+                } else {
+                    // If date found but no complete entry in chart, still offer Billboard link
+                    displayMessage(`
+                        <strong>🗓️ Taken On: ${photoDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong><br>
+                        <br>
+                        No #1 song found in our database for the week of ${weekKey}.<br>
+                        <a href="https://www.billboard.com/charts/hot-100/${weekKey}" target="_blank" style="display:inline-block; margin-top:10px; padding: 8px 15px; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em;">📈 View Billboard Chart for this date</a>
+                    `);
+                }
             } catch (error) {
-                console.error("Error processing image with AI:", error);
-                displayMessage("An error occurred during AI analysis. Please try again.", false, true);
+                console.error("Error in handleFile:", error);
+                displayMessage("Error processing photo. Please ensure it's a valid image file with readable EXIF data.", false, true);
             } finally {
                 // Revoke the object URL to free up memory
                 if (img.src && img.src.startsWith('blob:')) {
