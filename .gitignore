@@ -1,1 +1,11 @@
 .DS_Store
+# Ignore Python virtual environments
+venv/
+
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore common Python cache/build directories
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
