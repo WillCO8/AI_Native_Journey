@@ -51,6 +51,13 @@ Qualitative Feedback: After the tasks, ask open-ended questions such as: "How di
 Live Prototype
 You can view and interact with the Figma prototype of this redesign here:
 
-https://www.figma.com/make/WwxkA9J5atwMjfCTjaYoi2/Apple-Notes-Pin-Unpin-Redesign?node-id=0-1&p=f&t=Brabhwa47nAekSQU-0&fullscreen=1
+https://www.figma.com/make/WwxkA9J5atwMjfCTjaYoi2/Apple-Notes-Pin-Unpin-Redesign?node-id=0-1&p=f&t=86K6clE2tfKASrOn-0&fullscreen=1
 
-(Note: When sharing, it's recommended to use the link obtained after clicking the "Play" (Present) button in Figma. This provides a clean, full-screen view of your prototype without the Figma editing interface or AI chat history, which is ideal for presentations and demonstrations.)
+UI Kit Integration
+A key aspect of this redesign's development involved incorporating UI kit components for the pin button and toast notification. This approach was chosen to ensure the design's scalability, consistency, and maintainability, aligning with professional UX/UI best practices.
+
+Pin Button: The interactive pin button, with its distinct pinned and unpinned states and subtle animation, was implemented using a reusable Button component, demonstrating how a core UI element can be standardized.
+
+Toast Notification: The "Note Pinned!" and "Note Unpinned!" confirmation messages were integrated using a Toaster component from the sonner library. This ensures consistent, non-intrusive feedback across the application.
+
+By leveraging these pre-built, customizable components, the design process was made more efficient, allowing focus on the core user experience improvements while building a robust, component-based structure.
