@@ -105,5 +105,3 @@ To ensure **scalability, consistency, and maintainability**, this redesign uses 
   Non-intrusive "Note Pinned!" and "Note Unpinned!" messages powered by the [Sonner](https://sonner.emilkowal.ski/) Toaster component.
 
 This component-driven approach enhances both **developer experience and UX quality**, allowing focus on meaningful improvements.
-
----
